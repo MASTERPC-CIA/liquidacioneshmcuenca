@@ -145,9 +145,7 @@ class Liquidacion_all_servicios {
                     $tot_grupos_iva+=$tot_marcas_iva;
                 }
             }
-        } else {
-            echo info_msg('No se encuentran grupos de productos en las fechas seleccionadas', '18px');
-        }
+        } 
         $send['list'] = $list_grupos;
         $send['total_servicio'] = $total_grupos;
         $send['tot_serv_iva_0'] = $tot_grupos_iva_0;
@@ -202,9 +200,7 @@ class Liquidacion_all_servicios {
                 $cont_aseg++;
                 $total_aseg+=$total_grupos;
             }
-        } else {
-            echo info_msg('No se encuentran facturas a crédito en las fechas seleccionadas.', '18px');
-        }
+        } 
     
         $send['list_aseg'] = $list_aseg;
         $send['total_serv_credito'] = $total_aseg;

@@ -166,10 +166,7 @@ class liquidacion_planillas {
                 $tot_aseg_otro_iva+=$tot_grupos_otro_iva;
                 $tot_aseg_iva+=$tot_grupos_iva;
             }
-        } else {
-            echo info_msg('No se encuentran planillas en las fechas selecionadas', '18px');
-        }
-
+        } 
         $res['list_aseg'] = $list_aseg_serv;
 //        $res['tot_serv_cred'] = $tot_serv_cred;
 //        $res['tot_serv_efect'] = $tot_serv_efect;
