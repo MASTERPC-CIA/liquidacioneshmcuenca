@@ -7,21 +7,19 @@
   'method' => 'post', 'target' => '_blank', 'class' => 'btn btn-success btn-sm'));
  */
 //echo lineBreak();
-echo '<span class="pull-left"><strong>CONSULTA EXTERNA - TURNOS</strong></span>';
-
-echo Open('div', array('id' => 'div_informes_list', 'class' => 'col-md-12'));
-echo Open('table', array('id' => 'table_informe', 'class' => "table table-fixed-header"));
-echo '<thead>';
-echo '<th>Cedula</th>';
-echo '<th>Nombre</th>';
-echo '<th>Especialidad</th>';
-echo '<th>Medico</th>';
-echo '<th>Hospital</th>';
-echo '<th>Total</th>';
-echo '</thead>';
-
-echo '<tbody>';
 if (!empty($data1)):
+    echo '<span class="pull-left"><strong>CONSULTA EXTERNA - TURNOS</strong></span>';
+    echo Open('div', array('id' => 'div_informes_list', 'class' => 'col-md-12'));
+    echo Open('table', array('id' => 'table_informe', 'class' => "table table-fixed-header"));
+    echo '<thead>';
+    echo '<th>Cedula</th>';
+    echo '<th>Nombre</th>';
+    echo '<th>Especialidad</th>';
+    echo '<th>Medico</th>';
+    echo '<th>Hospital</th>';
+    echo '<th>Total</th>';
+    echo '</thead>';
+    echo '<tbody>';
     foreach ($data1 as $val) {
         echo Open('tr');
         echo tagcontent('td', $val->PersonaComercio_cedulaRuc);
@@ -32,61 +30,66 @@ if (!empty($data1)):
         echo tagcontent('td', "$ " . $val->total);
         echo Close('tr');
     }
+    echo '</tbody>';
+    echo '</table>';
+    echo Close('div');
+    echo LineBreak();
 endif;
-echo '</tbody>';
-echo '</table>';
-echo Close('div');
 
-echo LineBreak();
-
-echo '<span class="pull-left"><strong>PROCEDIMIENTOS DE DIAGNOSTICO</strong></span>';
-
-echo Open('div', array('id' => 'div_informes_list', 'class' => 'col-md-12'));
-echo Open('table', array('id' => 'table_informe', 'class' => "table table-fixed-header"));
-echo '<thead>';
-echo '<th>Cedula</th>';
-echo '<th>Nombre</th>';
-echo '<th>Especialidad</th>';
-echo '<th>Medico</th>';
-echo '<th>Hospital</th>';
-echo '<th>Total</th>';
-echo '</thead>';
-
-echo '<tbody>';
-//data 4 - dermatologia
-if (!empty($data4)):
-    foreach ($data4 as $val) {
+if (!empty($data2)):
+    echo '<span class="pull-left"><strong>PROCEDIMIENTOS DE DIAGNOSTICO</strong></span>';
+    echo Open('div', array('id' => 'div_informes_list', 'class' => 'col-md-12'));
+    echo Open('table', array('id' => 'table_informe', 'class' => "table table-fixed-header"));
+    echo '<thead>';
+    echo '<th>Cedula</th>';
+    echo '<th>Nombre</th>';
+    echo '<th>Especialidad</th>';
+    echo '<th>Medico</th>';
+    echo '<th>Hospital</th>';
+    echo '<th>Total</th>';
+    echo '</thead>';
+    echo '<tbody>';
+//DATA 2 CARDIOLOGO - NEUROLOGO - DERMATOLOGO
+//59	Neurología
+//80	Cardiología 
+//82	Dermatología
+    foreach ($data2 as $val) {
         echo Open('tr');
         echo tagcontent('td', $val->PersonaComercio_cedulaRuc);
         echo tagcontent('td', $val->nom . ' ' . $val->ape);
         echo tagcontent('td', $val->especialidad);
-        echo tagcontent('td', "$ " . $val->total * 0.7);
-        echo tagcontent('td', "$ " . $val->total * 0.3);
-        echo tagcontent('td', "$ " . $val->total);
+        if ($val->cargosempleado_id == 59 OR $val->cargosempleado_id == 80) {
+            $tot = $val->total * 0.25;
+        } else {
+            $tot = $val->total;
+        }
+
+        echo tagcontent('td', "$ " . $tot * 0.7);
+        echo tagcontent('td', "$ " . $tot * 0.3);
+        echo tagcontent('td', "$ " . $tot);
         echo Close('tr');
     }
+    echo '</tbody>';
+    echo '</table>';
+    echo Close('div');
+    echo LineBreak();
 endif;
-echo '</tbody>';
-echo '</table>';
-echo Close('div');
 
-echo LineBreak();
-
-echo '<span class="pull-left"><strong>PARTE OPERATORIO</strong></span>';
-
-echo Open('div', array('id' => 'div_informes_list', 'class' => 'col-md-12'));
-echo Open('table', array('id' => 'table_informe', 'class' => "table table-fixed-header"));
-echo '<thead>';
-echo '<th>Cedula</th>';
-echo '<th>Nombre</th>';
-echo '<th>Especialidad</th>';
-echo '<th>Medico</th>';
-echo '<th>Hospital</th>';
-echo '<th>Total</th>';
-echo '</thead>';
-
-echo '<tbody>';
 if (!empty($data3)):
+    echo '<span class="pull-left"><strong>PARTE OPERATORIO</strong></span>';
+    echo Open('div', array('id' => 'div_informes_list', 'class' => 'col-md-12'));
+    echo Open('table', array('id' => 'table_informe', 'class' => "table table-fixed-header"));
+    echo '<thead>';
+    echo '<th>Cedula</th>';
+    echo '<th>Nombre</th>';
+    echo '<th>Especialidad</th>';
+    echo '<th>Medico</th>';
+    echo '<th>Hospital</th>';
+    echo '<th>Total</th>';
+    echo '</thead>';
+
+    echo '<tbody>';
+
     foreach ($data3 as $val) {
         echo Open('tr');
         echo tagcontent('td', $val->PersonaComercio_cedulaRuc);
@@ -97,10 +100,11 @@ if (!empty($data3)):
         echo tagcontent('td', "$ " . $val->total);
         echo Close('tr');
     }
+
+    echo '</tbody>';
+    echo '</table>';
+    echo Close('div');
 endif;
-echo '</tbody>';
-echo '</table>';
-echo Close('div');
 ?>
 
 
