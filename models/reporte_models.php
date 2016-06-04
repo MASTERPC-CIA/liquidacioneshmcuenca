@@ -42,7 +42,7 @@ class Reporte_models extends CI_Model {
             $where_data3['po.pt_ope_fecha >= '] = $fecha_desde;
             $where_data3['po.pt_ope_fecha <= '] = $fecha_hasta;
         }
-        $join_clause3[] = array('table' => 'hmc_personal_parteope pp', 'condition' => 'pp.per_ope_id = po.pt_ope_idPersonal');
+        $join_clause3[] = array('table' => 'hmc_personal_parteOpe pp', 'condition' => 'pp.per_ope_id = po.pt_ope_idPersonal');
         $join_clause3[] = array('table' => 'billing_facturaventadetalle fvd', 'condition' => 'po.id_fact = fvd.facturaventa_codigofactventa');
         $join_clause3[] = array('table' => 'billing_producto p', 'condition' => 'p.codigo = fvd.Producto_codigo');
         $join_clause3[] = array('table' => 'billing_productogrupo pg', 'condition' => 'p.productogrupo_codigo = pg.codigo');
