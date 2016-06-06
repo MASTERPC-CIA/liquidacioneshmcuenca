@@ -88,7 +88,7 @@ class Reporte_models extends CI_Model {
         $join_clause4[] = array('table' => 'billing_productogrupo pg', 'condition' => 'p.productogrupo_codigo = pg.codigo');
 
         $join_clause4[] = array('table' => 'informe inf', 'condition' => 'sol.sol_id = inf.inf_solicitudId');
-        $join_clause4[] = array('table' => 'billing_empleado emp', 'condition' => 'emp.id = inf.inf_empleadoId AND (emp.cargosempleado_id = 86 )');//cargosempleado_id para radiologia
+        $join_clause4[] = array('table' => 'billing_empleado emp', 'condition' => 'emp.id = inf.inf_empleadoId AND (emp.cargosempleado_id = 115 )');//cargosempleado_id para radiologia
         $join_clause4[] = array('table' => 'billing_cargosempleado ce', 'condition' => 'emp.cargosempleado_id = ce.id');
         $fields4 = ' emp.PersonaComercio_cedulaRuc, emp.nombres nom, emp.apellidos ape, emp.cargosempleado_id, ce.nombreCargo especialidad,SUM(`p`.`costopromediokardex`*pg.prodgp_factor_conv) total';
 
