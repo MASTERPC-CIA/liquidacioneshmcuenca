@@ -550,12 +550,11 @@ class Index extends MX_Controller {
         return $prod;
     }
 
-    
     public function get_honorarios_medicos() {
         $this->load->view('head_honorarios_medicos');
     }
-    
-     public function get_list_honorarios() {
+
+    public function get_list_honorarios() {
         $this->load->model('reporte_models');
         $fecha_desde = $this->input->post('f_desde');
         $fecha_hasta = $this->input->post('f_hasta');
@@ -563,6 +562,13 @@ class Index extends MX_Controller {
         $res = $this->reporte_models->get_turnos($fecha_desde, $fecha_hasta);
         //echo $res = $this->reporte_models->get_parte_ope($fecha_desde, $fecha_hasta);
         $this->load->view('listado_honorarios', $res);
+    }
+
+    function export_honorarios_to_excel($fecha_desde = '', $fecha_hasta = '') {
+        $this->load->model('reporte_models');
+
+        $res = $this->reporte_models->get_turnos($fecha_desde, $fecha_hasta);
+        $this->load->view('listado_honorarios_excel', $res);
     }
 
 }

@@ -1,14 +1,12 @@
+<meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" /><!--Exportar con tildes-->
 <?php
+header('Content-Type: application/vnd.ms-excel'); // Para trabajar con los navegadores IE y Opera 
+header('Content-type: application/x-msexcel'); // Para trabajar con el resto de navegadores
+header('Content-Disposition: attachment; filename="reporte_honorarios.xls"');
+header('Cache-Control: max-age=0');
+header('Expires: 0');
+header("Content-Type: charset=utf-8");
 
-/* Boton Imprimir */
-//echo tagcontent('button', '<span class="glyphicon glyphicon-print"></span> Imprimir', array('id' => 'printbtn', 'data-target' => 'div_informes_list', 'class' => 'btn btn-default pull-left'));
-/* METODO PARA EXPORTA A EXCEL */
-if (!empty($data1) OR !empty($data2) OR !empty($data3) OR !empty($data4)):
-echo tagcontent('a', '<span class="glyphicon glyphicon-export"></span> Exportar a Excel', array('href' => base_url('liquidacioneshmcuenca/index/export_honorarios_to_excel/' . $fecha_emision_desde . '/' . $fecha_emision_hasta),
-    'method' => 'post', 'target' => '_blank', 'class' => 'btn btn-success btn-sm'));
-endif;
-
-echo lineBreak();
 if (!empty($data1)):
     echo '<span class="pull-left"><strong>CONSULTA EXTERNA - TURNOS</strong></span>';
     echo Open('div', array('id' => 'div_informes_list', 'class' => 'col-md-12'));
@@ -125,6 +123,5 @@ if (!empty($data3)):
     echo '</table>';
     echo Close('div');
 endif;
-?>
-
-
+                                    
+                                
