@@ -1,5 +1,14 @@
 <?php
+/*Necesarias para exportar a excel*/
+//header('Content-Type: application/vnd.ms-excel');// Para trabajar con los navegadores IE y Opera 
+//header('Content-type: application/x-msexcel'); // Para trabajar con el resto de navegadores
+//header('Content-Disposition: attachment;filename="librodiario.xls"');
+//header('Cache-Control: max-age=0');
+//header('Expires: 0');
 echo tagcontent('button', 'IMPRIMIR', array('name' => 'btnPrint', 'class' => 'btn btn-warning col-md-1', 'id' => 'printbtn', 'type' => 'button','data-target' => 'consulta'));
+//echo tagcontent('a', '<span class="glyphicon glyphicon-export"></span> Exportar a Excel', array('href' => base_url('liquidacioneshmcuenca/tesoreria/reporte_estudio_antig/export_to_excel'), 'target' => '_blank', 'class' => 'btn btn-success btn-xm'));
+//echo tagcontent('button', 'EXPORTAR A EXCEL', array('name' => 'btnPrint', 'class' => 'btn btn-success col-md-1', 'id' => 'printbtn', 'type' => 'button','data-target' => 'consulta'));
+//echo tagcontent('a', '<span class="glyphicon glyphicon-export"></span> Exportar a Excel', array('href' => base_url('contabilidad/diario/export_to_excel/' . $fechaIni . '/' . $fechaFin . '/' . $cuenta . '/' . $doc . '/' . $num_doc), 'target' => '_blank', 'class' => 'btn btn-success btn-xm'));
 echo Open('div',array('class'=>'col-md-12','id'=>'consulta','style'=>'font-size:16px'));
 
     echo '<CENTER><b>'.get_settings('RAZON_SOCIAL').'</b></CENTER><BR>';

@@ -9,7 +9,6 @@ class reporte_estudio_antig extends MX_Controller {
 
     private $pago_credito = 2; //Cuando las facturas se pagan a crédito
     private $tipo_comprobante = '01'; //01 para facturas
-
     private $cons_externa = 1; //1 corresponde al código de consulta externa
     private $hospitaliz = 2; // Servicio Emergencia
     private $emergencia = 3; // Servicio Hospitalizacion
@@ -20,6 +19,10 @@ class reporte_estudio_antig extends MX_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->library('rep_estudio_antig');
+    }
+
+    public function export_to_excel() {
+        $this->get_reporte_estudio_antig();
     }
 
     public function load_view_search_estudio_antig() {
@@ -36,25 +39,20 @@ class reporte_estudio_antig extends MX_Controller {
             if ($fecha_desde > $fecha_hasta) {
                 echo info_msg('La fecha inicial debe ser menor a la fecha final de la cual desea sacar el reporte', '18px');
             } else {
-                $this->load->helper('date');
-                $diferencia = date_diff_date($fecha_desde, $fecha_hasta);
-//                $diferencia.get
-                echo 'Diferencia '.$diferencia;
-//                if ($id_aseg != -1 && $tipo_rep != -1) {
-//                    $res['tipo'] = $tipo_rep;
-//                    $res['fecha_desde']=$fecha_desde;
-//                    $res['fecha_hasta']=$fecha_hasta;
-//                    if($tipo_rep=='Cliente'){
-//                        $res['campo_tipo']=$this->rep_estudio_antig->get_estudio_antig_x_cliente($fecha_desde, $fecha_hasta, $this->estado_planilla, $this->cod_paciente_civil, $id_aseg);
-//                        $this->load->view('tesoreria/result_est_antig_por_cliente', $res);
-//                    }elseif($tipo_rep=='Servicio'){
-//                         $res['campo_tipo']=$this->rep_estudio_antig->get_estudio_antig_x_servicio($fecha_desde, $fecha_hasta, $this->estado_planilla, $this->cod_paciente_civil, $id_aseg);
-//                         $this->load->view('tesoreria/result_est_antig_por_servicio', $res);
-//                    }
-//                    
-//                } else {
-//                    echo info_msg('Debe seleccionar una aseguradora y un tipo de filtro', '18px');
-//                }
+                if ($id_aseg != -1 && $tipo_rep != -1) {
+                    $res['tipo'] = $tipo_rep;
+                    $res['fecha_desde'] = $fecha_desde;
+                    $res['fecha_hasta'] = $fecha_hasta;
+                    if ($tipo_rep == 'Cliente') {
+                        $res['campo_tipo'] = $this->rep_estudio_antig->get_estudio_antig_x_cliente($fecha_desde, $fecha_hasta, $this->estado_planilla, $this->cod_paciente_civil, $id_aseg);
+                        $this->load->view('tesoreria/result_est_antig_por_cliente', $res);
+                    } elseif ($tipo_rep == 'Servicio') {
+                        $res['campo_tipo'] = $this->rep_estudio_antig->get_estudio_antig_x_servicio($fecha_desde, $fecha_hasta, $this->estado_planilla, $this->cod_paciente_civil, $id_aseg);
+                        $this->load->view('tesoreria/result_est_antig_por_servicio', $res);
+                    }
+                } else {
+                    echo info_msg('Debe seleccionar una aseguradora y un tipo de filtro', '18px');
+                }
             }
         } else {
             echo info_msg('Debe seleccionar un rango de fechas', '18px');
