@@ -58,6 +58,15 @@
                     <!--<li><a href="#/desg_ing_diario"><i class="fa fa-dashboard"></i>Desglose de Ingresos Diarios</a></li>-->
                 </ul>
             </li>
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-dashboard "></i> <span>Liquidaci&oacute;n Tesoreria</span> <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a href="#/rep_int"><i class="fa fa-dashboard"></i>Rep. Integrado de Ingresos</a></li>
+                    <li><a href="#/est_cuentas"><i class="fa fa-dashboard"></i>Rep. Estudio de Antiguedades</a></li>
+                </ul>
+            </li>
 
         </ul>
     </div>

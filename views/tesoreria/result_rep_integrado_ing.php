@@ -69,4 +69,6 @@ echo Open('div',array('class'=>'col-md-12','id'=>'consulta','style'=>'font-size:
             echo tagcontent('td', number_format($SPPAT['total'], get_settings('NUM_DECIMALES'), '.', ','));
         echo Close('tr');
     echo Close('table');
+    echo LineBreak(2);
+    $this->load->view('tesoreria/footer_contabilidad');
 echo Close('div');
