@@ -21,10 +21,6 @@ class reporte_estudio_antig extends MX_Controller {
         $this->load->library('rep_estudio_antig');
     }
 
-    public function export_to_excel() {
-        $this->get_reporte_estudio_antig();
-    }
-
     public function load_view_search_estudio_antig() {
         $res['aseguradoras'] = $this->generic_model->get('aseguradoras', array('tiene_convenio' => 1), 'id, ase_nombre');
         $this->load->view('tesoreria/search_rep_estudio_antig', $res);
@@ -43,19 +39,32 @@ class reporte_estudio_antig extends MX_Controller {
                     $res['tipo'] = $tipo_rep;
                     $res['fecha_desde'] = $fecha_desde;
                     $res['fecha_hasta'] = $fecha_hasta;
+                    $res['id_aseg'] = $id_aseg;
                     if ($tipo_rep == 'Cliente') {
                         $res['campo_tipo'] = $this->rep_estudio_antig->get_estudio_antig_x_cliente($fecha_desde, $fecha_hasta, $this->estado_planilla, $this->cod_paciente_civil, $id_aseg);
-                        $this->load->view('tesoreria/result_est_antig_por_cliente', $res);
                     } elseif ($tipo_rep == 'Servicio') {
                         $res['campo_tipo'] = $this->rep_estudio_antig->get_estudio_antig_x_servicio($fecha_desde, $fecha_hasta, $this->estado_planilla, $this->cod_paciente_civil, $id_aseg);
-                        $this->load->view('tesoreria/result_est_antig_por_servicio', $res);
                     }
+                    $this->load->view('tesoreria/head_rep_est_antig', $res);
                 } else {
                     echo info_msg('Debe seleccionar una aseguradora y un tipo de filtro', '18px');
                 }
             }
         } else {
             echo info_msg('Debe seleccionar un rango de fechas', '18px');
+        }
+    }
+
+    public function export_to_excel($fecha_desde, $fecha_hasta, $id_aseg, $tipo_rep) {
+        $res['tipo'] = $tipo_rep;
+        $res['fecha_desde'] = $fecha_desde;
+        $res['fecha_hasta'] = $fecha_hasta;
+        if ($tipo_rep == 'Cliente') {
+            $res['campo_tipo'] = $this->rep_estudio_antig->get_estudio_antig_x_cliente($fecha_desde, $fecha_hasta, $this->estado_planilla, $this->cod_paciente_civil, $id_aseg);
+            $this->load->view('tesoreria/result_est_antig_por_cliente', $res);
+        } elseif ($tipo_rep == 'Servicio') {
+            $res['campo_tipo'] = $this->rep_estudio_antig->get_estudio_antig_x_servicio($fecha_desde, $fecha_hasta, $this->estado_planilla, $this->cod_paciente_civil, $id_aseg);
+            $this->load->view('tesoreria/result_est_antig_por_servicio', $res);
         }
     }
 

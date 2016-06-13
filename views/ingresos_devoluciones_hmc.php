@@ -1,5 +1,5 @@
 <?php
-echo tagcontent('button', 'IMPRIMIR', array('name' => 'btnPrint', 'class' => 'btn btn-warning col-md-1', 'id' => 'printbtn', 'type' => 'button','data-target' => 'consulta_ing_devoluc'));
+echo tagcontent('button', '<span class="glyphicon glyphicon-print"></span> Imprimir', array('name' => 'btnPrint', 'class' => 'btn btn-warning col-md-1', 'id' => 'printbtn', 'type' => 'button','data-target' => 'consulta_ing_devoluc'));
 echo Open('div',array('class'=>'col-md-12','id'=>'consulta_ing_devoluc','style'=>'font-size:12px'));
     echo '<CENTER><b>'.get_settings('RAZON_SOCIAL').'</b></CENTER><BR>';
     echo '<CENTER><b>RESUMEN DE INGRESOS Y DEVOLUCIONES</b><CENTER><BR>';

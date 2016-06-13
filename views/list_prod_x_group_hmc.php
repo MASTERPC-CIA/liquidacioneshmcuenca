@@ -21,8 +21,8 @@ echo Open('form',array('name'=>'devoluciones_form','class'=>'form-horizontal','r
             echo tagcontent('select',$option1,array('class'=>"form-control", 'ng-options'=>"grupos_farm.codigo as grupos_farm.nombre for grupos_farm in grupos_farm", 'ng-model'=>"selectedGrupoFarm"));
         echo Close('div');
     echo Close('div');
-    echo tagcontent('button', '', array('class' => 'btn btn-primary glyphicon glyphicon-search col-md-1', 'type' => 'button','ng-click'=>'consultar(fecha_ini.value,fecha_fin.value,selectedBodega,selectedGrupoFarm)','ng-disabled'=>'devoluciones_form.$invalid'));
-    echo tagcontent('button', 'IMPRIMIR', array('name' => 'btnPrint', 'class' => 'btn btn-warning col-md-1', 'id' => 'printbtn', 'type' => 'button','data-target' => 'consulta'));
+    echo tagcontent('button', ' Buscar', array('class' => 'btn btn-primary glyphicon glyphicon-search col-md-1', 'type' => 'button','ng-click'=>'consultar(fecha_ini.value,fecha_fin.value,selectedBodega,selectedGrupoFarm)','ng-disabled'=>'devoluciones_form.$invalid'));
+    echo tagcontent('button', '<span class="glyphicon glyphicon-print"></span> Imprimir', array('name' => 'btnPrint', 'class' => 'btn btn-warning col-md-1', 'id' => 'printbtn', 'type' => 'button','data-target' => 'consulta'));
 echo Close('form');//Cierre del formulario
 //echo '{{list}}';
 echo Open('div',array('class'=>'col-md-12','id'=>'consulta','style'=>'font-size:16px','ng-show'=>'true'));

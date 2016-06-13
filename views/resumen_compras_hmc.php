@@ -1,6 +1,6 @@
 <?php
 
-echo tagcontent('button', 'IMPRIMIR', array('name' => 'btnPrint', 'class' => 'btn btn-warning col-md-1', 'id' => 'printbtn', 'type' => 'button','data-target' => 'consulta'));
+echo tagcontent('button', '<span class="glyphicon glyphicon-print"></span> Imprimir', array('name' => 'btnPrint', 'class' => 'btn btn-warning col-md-1', 'id' => 'printbtn', 'type' => 'button','data-target' => 'consulta'));
 echo Open('div',array('class'=>'col-md-12','id'=>'consulta','style'=>  'font-size:'.get_settings('FONT_SIZE_FACT')));
     echo Open('div', array('class'=>'col-md-12'));
         $this->load->view('common/hmc_head/encabezado_cuenca');
