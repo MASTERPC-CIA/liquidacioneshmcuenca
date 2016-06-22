@@ -46,5 +46,23 @@ class liquidaciones {
         }
         return $id_det;
     }
+    
+    public function save_det_liq_rep_integrado($id_liq, $detalle_liquidacion) {
+        $id_det = -1; //Se inicializa ya que se puede obtener o no un detalle
+        if ($detalle_liquidacion) {
+            foreach ($detalle_liquidacion['list_tot_x_grupo'] as $value) {
+                $data_det = array(
+                    'det_rep_estado_serv' => $value->id_servicio,
+                    'det_rep_grupo_serv' => $value->grupo_id,
+                    'det_rep_val_credito' => $value->credito,
+                    'det_rep_val_efectivo' => $value->efectivo,
+                    'det_rep_id_aseg' => $value->id_aseguradora,
+                    'det_id_liquidacion' => $id_liq
+                );
+                $id_det = $this->ci->generic_model->save($data_det, 'det_liq_integrada_mensual');
+            }
+        }
+        return $id_det;
+    }
 
 }

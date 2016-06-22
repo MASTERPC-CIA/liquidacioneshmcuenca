@@ -15,7 +15,7 @@ class rep_integ_mensual {
         $this->ci->load->library('liquidacion_planillas');
     }
 
-    public function get_tot_grupo_servicio_factura($fecha_desde, $fecha_hasta, $tipo_servicio, $tipo_comprobante, $tipo_pago, $lista_grupos) {
+    public function get_tot_grupo_servicio_factura($fecha_desde, $fecha_hasta, $tipo_servicio, $tipo_comprobante, $tipo_pago, $lista_grupos, $id_aseg=-1) {
 
         $list_tot_x_grupo = array();
         $sum_total=0;
@@ -29,7 +29,14 @@ class rep_integ_mensual {
                         $sum_valor_prod+=$value->itemxcantidadprecioiva;
                     }
                 }
-                $list_tot_x_grupo[$cont_gp] = (Object) array('grupo_id' => $grupo->id, 'val_tot_grupo' => $sum_valor_prod);
+                if($tipo_pago==1){
+                    $val_efectivo=$sum_valor_prod;
+                    $val_credito = 0;
+                }else{
+                    $val_efectivo=0;
+                    $val_credito = $sum_valor_prod;
+                }
+                $list_tot_x_grupo[$cont_gp] = (Object) array('grupo_id' => $grupo->id, 'val_tot_grupo' => $sum_valor_prod, 'id_aseguradora'=>$id_aseg, 'id_servicio'=>$tipo_servicio, 'efectivo'=>$val_efectivo, 'credito'=>$val_credito);
                 $cont_gp++;
                 $sum_total+=$sum_valor_prod;
             }
@@ -52,21 +59,25 @@ class rep_integ_mensual {
         return $productos;
     }
 
-    public function get_tot_grupo_servicio_planilla($fecha_desde, $fecha_hasta, $tipo_paciente, $estado_pla, $lista_grupos, $id_aseg) {
+    public function get_tot_grupo_servicio_planilla($fecha_desde, $fecha_hasta, $tipo_paciente, $estado_pla, $lista_grupos, $id_aseg, $tipo_servicio) {
 
         $list_tot_x_grupo = array();
         $sum_total=0;
         if ($lista_grupos) {
             $cont_gp = 0;
             foreach ($lista_grupos as $grupo) {
-                $productos = $this->get_prod_x_grupo_planilla($fecha_desde, $fecha_hasta, $tipo_paciente, $estado_pla, $grupo->id, $id_aseg);
+                $productos = $this->get_prod_x_grupo_planilla($fecha_desde, $fecha_hasta, $tipo_paciente, $estado_pla, $grupo->id, $id_aseg, $tipo_servicio);
                 $sum_valor_prod = 0;
                 if ($productos) {
                     foreach ($productos as $value) {
                         $sum_valor_prod+=$value->itemxcantidadprecioiva;
                     }
                 }
-                $list_tot_x_grupo[$cont_gp] = (Object) array('grupo_id' => $grupo->id, 'val_tot_grupo' => $sum_valor_prod);
+
+                $val_efectivo=0;
+                $val_credito = $sum_valor_prod;
+
+                $list_tot_x_grupo[$cont_gp] = (Object) array('grupo_id' => $grupo->id, 'val_tot_grupo' => $sum_valor_prod, 'id_aseguradora'=>$id_aseg, 'id_servicio'=>$tipo_servicio, 'efectivo'=>$val_efectivo, 'credito'=>$val_credito);
                 $cont_gp++;
                 $sum_total+=$sum_valor_prod;
             }
@@ -76,11 +87,11 @@ class rep_integ_mensual {
         return $send;
     }
 
-    public function get_prod_x_grupo_planilla($fecha_desde, $fecha_hasta, $tipo_paciente, $estado, $id_grupo, $id_aseg) {
+    public function get_prod_x_grupo_planilla($fecha_desde, $fecha_hasta, $tipo_paciente, $estado, $id_grupo, $id_aseg, $tipo_planilla) {
         $fields = 'pld.pdet_total itemxcantidadprecioiva';
 
         $where_data = array('pl.pla_fecha_creacion >= ' => $fecha_desde, 'pl.pla_fecha_creacion <= ' => $fecha_hasta, 'pl.pla_estado' => $estado,
-            'bc.clientetipo_idclientetipo !=' => $tipo_paciente, 'p.productogrupo_codigo' => $id_grupo, 'pl.pla_id_ase' => $id_aseg);
+            'bc.clientetipo_idclientetipo !=' => $tipo_paciente, 'p.productogrupo_codigo' => $id_grupo, 'pl.pla_id_ase' => $id_aseg, 'pl.pla_tipo'=>$tipo_planilla);
 
         $join_cluase = array(
             '0' => array('table' => 'billing_cliente bc', 'condition' => 'bc.PersonaComercio_cedulaRuc=pl.pla_cedula_cliente'),
@@ -105,7 +116,15 @@ class rep_integ_mensual {
                         $sum_valor_prod+=$value->itemxcantidadprecioiva;
                     }
                 }
-                $list_tot_x_grupo[$cont_gp] = (Object) array('grupo_id' => $grupo->id, 'val_tot_grupo' => $sum_valor_prod);
+
+                if($tipo_pago==1){
+                    $val_efectivo=$sum_valor_prod;
+                    $val_credito = 0;
+                }else{
+                    $val_efectivo=0;
+                    $val_credito = $sum_valor_prod;
+                }
+                $list_tot_x_grupo[$cont_gp] = (Object) array('grupo_id' => $grupo->id, 'val_tot_grupo' => $sum_valor_prod, 'id_aseguradora'=>$id_aseg, 'id_servicio'=>$tipo_servicio, 'efectivo'=>$val_efectivo, 'credito'=>$val_credito);
                 $cont_gp++;
                 $sum_total+=$sum_valor_prod;
             }

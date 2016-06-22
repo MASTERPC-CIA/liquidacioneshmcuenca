@@ -74,7 +74,7 @@ class Liquid_recaudacion extends MX_Controller {
     public function save_liq_ingresos_diarios($fecha_desde, $fecha_hasta) {
         //Guarda la liquidación actual, guarda el id de la misma para guarda el detalle
         $fecha_act=date('Y-m-d', time());
-        $fecha_liq = $this->generic_model->get('liquidacionhmc', array('liq_fechaDesde'=>$fecha_desde,'liq_fechaHasta'=>$fecha_hasta, 'liq_fechaCreacion'=>$fecha_act));
+        $fecha_liq = $this->generic_model->get('liquidacionhmc', array('liq_fechaDesde'=>$fecha_desde,'liq_fechaHasta'=>$fecha_hasta, 'liq_fechaCreacion'=>$fecha_act, 'liq_tipo'=>$this->liq_ing_diarios));
 
         if (!$fecha_liq) {
             $id_liq = $this->liquidaciones->save_liquidacion($fecha_desde, $fecha_hasta, $this->liq_ing_diarios);
