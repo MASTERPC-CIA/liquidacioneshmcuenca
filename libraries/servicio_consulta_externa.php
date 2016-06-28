@@ -32,7 +32,7 @@ class Servicio_consulta_externa {
       
     //Permite obtener el total de los servicios consumidos por pacientes que se encuentran en consulta externa y tienen una aseguradora que cubre sus gastos
     public function get_fact_pago_credito_pacientes($fecha_desde, $fecha_hasta) {
-        return $this->ci->liquidacion_all_servicios->get_valores_liquid_por_aseguradora($fecha_desde, $fecha_hasta, $this->cod_cons_externa, $this->tipo_pago_credito, $this->comprob_servicio);
+        return $this->ci->liquidacion_all_servicios->get_valores_liquid_por_aseguradora($fecha_desde, $fecha_hasta, $this->cod_cons_externa, $this->tipo_pago_efectivo, $this->comprob_servicio);
     }
 
 }
