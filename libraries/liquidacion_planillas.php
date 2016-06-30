@@ -122,11 +122,11 @@ class liquidacion_planillas {
                         $tot_marcas_otro_iva = 0;
                         $tot_marcas_iva = 0;
                         $list_marcas = array();
-                        $marcas = $this->get_marcas_producto_por_grupo($fecha_desde, $fecha_hasta, $tipo_servicio, $tipo_paciente, $estado, $grupo->id);
+                        $marcas = $this->get_marcas_por_grupo_y_aseg($fecha_desde, $fecha_hasta, $tipo_servicio, $tipo_paciente, $estado, $grupo->id, $aseg->id_aseg);
                         if ($marcas) {
                             $cont_marcas = 0;
                             foreach ($marcas as $index2 => $marca) {
-                                $productos = $this->get_productos_por_marca($fecha_desde, $fecha_hasta, $tipo_servicio, $tipo_paciente, $estado, $marca->id);
+                                $productos = $this->get_prod_por_marca_y_aseg($fecha_desde, $fecha_hasta, $tipo_servicio, $tipo_paciente, $estado, $marca->id);
                                 $sum_valor_prod = 0;
                                 $prod_iva_0 = 0;
                                 $sum_iva = 0;
@@ -218,6 +218,38 @@ class liquidacion_planillas {
 
         $where_data = array('pl.pla_tipo' => $tipo_servicio, 'pl.pla_fecha_creacion >= ' => $fecha_desde, 'pl.pla_fecha_creacion <= ' => $fecha_hasta, 'pl.pla_estado' => $estado,
             'bc.clientetipo_idclientetipo !=' => $tipo_paciente, 'p.marca_id' => $id_marca);
+
+        $join_cluase = array(
+            '0' => array('table' => 'billing_cliente bc', 'condition' => 'bc.PersonaComercio_cedulaRuc=pl.pla_cedula_cliente'),
+            '1' => array('table' => 'planillaje_det pld', 'condition' => 'pld.pdet_id_planillaje=pl.id'),
+            '2' => array('table' => 'billing_producto p', 'condition' => 'p.codigo=pld.pdet_id_cod_producto'),
+            '3' => array('table' => 'bill_productoimpuestotarifa pit', 'condition' => 'pit.producto_id = p.codigo'),
+            '4' => array('table' => 'bill_impuestotarifa it', 'condition' => 'it.id = pit.impuestotarifa_id')
+        );
+        $productos = $this->ci->generic_model->get_join('planillaje pl', $where_data, $join_cluase, $fields);
+        return $productos;
+    }
+     public function get_marcas_por_grupo_y_aseg($fecha_desde, $fecha_hasta, $tipo_servicio, $tipo_paciente, $estado, $id_grupo, $id_aseg) {
+        $fields = 'DISTINCT(m.id) id, m.nombre';
+
+        $where_data = array('pl.pla_tipo' => $tipo_servicio, 'pl.pla_fecha_creacion >= ' => $fecha_desde, 'pl.pla_fecha_creacion <= ' => $fecha_hasta, 'pl.pla_estado' => $estado,
+            'bc.clientetipo_idclientetipo !=' => $tipo_paciente, 'p.productogrupo_codigo' => $id_grupo, 'pl.pla_id_ase'=>$id_aseg);
+
+        $join_cluase = array(
+            '0' => array('table' => 'billing_cliente bc', 'condition' => 'bc.PersonaComercio_cedulaRuc=pl.pla_cedula_cliente'),
+            '1' => array('table' => 'planillaje_det pld', 'condition' => 'pld.pdet_id_planillaje=pl.id'),
+            '2' => array('table' => 'billing_producto p', 'condition' => 'p.codigo=pld.pdet_id_cod_producto'),
+            '3' => array('table' => 'billing_marca m', 'condition' => 'm.id=p.marca_id'),
+        );
+
+        $marcas = $this->ci->generic_model->get_join('planillaje pl', $where_data, $join_cluase, $fields);
+        return $marcas;
+    }
+     public function get_prod_por_marca_y_aseg($fecha_desde, $fecha_hasta, $tipo_servicio, $tipo_paciente, $estado, $id_marca, $id_grupo, $id_aseg) {
+        $fields = 'pld.pdet_total itemprecioxcantidadneto, it.tarporcent';
+
+        $where_data = array('pl.pla_tipo' => $tipo_servicio, 'pl.pla_fecha_creacion >= ' => $fecha_desde, 'pl.pla_fecha_creacion <= ' => $fecha_hasta, 'pl.pla_estado' => $estado,
+            'bc.clientetipo_idclientetipo !=' => $tipo_paciente, 'p.marca_id' => $id_marca, 'p.productogrupo_codigo'=>$id_grupo, 'pl.pla_id_ase'=>$id_aseg);
 
         $join_cluase = array(
             '0' => array('table' => 'billing_cliente bc', 'condition' => 'bc.PersonaComercio_cedulaRuc=pl.pla_cedula_cliente'),

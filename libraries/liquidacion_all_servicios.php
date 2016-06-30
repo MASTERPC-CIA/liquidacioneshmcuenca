@@ -175,11 +175,11 @@ class Liquidacion_all_servicios {
                     foreach ($grupos as $index1 => $grupo) {
                         $total_marcas = 0;
                         $list_marcas = array();
-                        $marcas = $this->get_marcas_producto_por_grupo($fecha_desde, $fecha_hasta, $tipo_servicio, $tipo_pago, $tipo_comprobante, $grupo->id);
+                        $marcas = $this->get_marcas_por_grupo_y_aseg($fecha_desde, $fecha_hasta, $tipo_servicio, $tipo_pago, $tipo_comprobante, $grupo->id, $aseg->id);
                         if ($marcas) {
                             $cont_marcas = 0;
                             foreach ($marcas as $index2 => $marca) {
-                                $productos = $this->get_productos_por_marca($fecha_desde, $fecha_hasta, $tipo_servicio, $tipo_pago, $tipo_comprobante, $marca->id);
+                                $productos = $this->get_prod_por_marca_y_aseg($fecha_desde, $fecha_hasta, $tipo_servicio, $tipo_pago, $tipo_comprobante, $marca->id, $grupo->id, $aseg->id);
                                 $sum_valor_prod = 0;
                                 if ($productos) {
                                     foreach ($productos as $value) {
@@ -247,5 +247,37 @@ class Liquidacion_all_servicios {
         $res['nombre_servicio'] = $this->get_name_servicio($tipo_servicio);
         
         return $res;   
+    }
+     public function get_marcas_por_grupo_y_aseg($fecha_desde, $fecha_hasta, $tipo_servicio, $tipo_pago, $tipo_comprobante, $id_grupo, $id_aseg) {
+        $fields = 'DISTINCT(m.id) id, m.nombre';
+        $where_data = array('fv.tipo_pago' => $tipo_pago, 'fv.servicio_hmc' => $tipo_servicio,
+            'fv.fechaarchivada >= ' => $fecha_desde, 'fv.fechaarchivada <= ' => $fecha_hasta, 'fv.estado' => 2,
+            'fv.puntoventaempleado_tiposcomprobante_cod' => $tipo_comprobante, 'p.productogrupo_codigo' => $id_grupo, 'bc.aseguradora_id' => $id_aseg);
+        $join_cluase = array(
+            '0' => array('table' => 'billing_cliente bc', 'condition' => 'bc.PersonaComercio_cedulaRuc=fv.cliente_cedulaRuc'),
+            '1' => array('table' => 'billing_facturaventadetalle fvd', 'condition' => 'fvd.facturaventa_codigofactventa=fv.codigofactventa'),
+            '2' => array('table' => 'billing_producto p', 'condition' => 'p.codigo=fvd.Producto_codigo'),
+            '3' => array('table' => 'billing_marca m', 'condition' => 'm.id=p.marca_id'),
+            
+        );
+
+        $marcas = $this->ci->generic_model->get_join('billing_facturaventa fv', $where_data, $join_cluase, $fields);
+        return $marcas;
+       
+    }
+     public function get_prod_por_marca_y_aseg($fecha_desde, $fecha_hasta, $tipo_servicio, $tipo_pago, $tipo_comprobante, $id_marca, $id_grupo, $id_aseg) {
+        $fields = 'fvd.itemprecioxcantidadneto, fvd.ivaporcent, fvd.ivavalitemprecioneto, it.tarporcent, itemxcantidadprecioiva, ivavalprecioxcantidadneto';
+        $where_data = array('fv.tipo_pago' => $tipo_pago, 'fv.servicio_hmc' => $tipo_servicio,
+            'fv.fechaarchivada >= ' => $fecha_desde, 'fv.fechaarchivada <= ' => $fecha_hasta, 'fv.estado' => 2,
+            'fv.puntoventaempleado_tiposcomprobante_cod' => $tipo_comprobante, 'p.marca_id' => $id_marca, 'p.productogrupo_codigo'=>$id_grupo,'bc.aseguradora_id' => $id_aseg);
+        $join_cluase = array(
+            '0' => array('table' => 'billing_cliente bc', 'condition' => 'bc.PersonaComercio_cedulaRuc=fv.cliente_cedulaRuc'),
+            '1' => array('table' => 'billing_facturaventadetalle fvd', 'condition' => 'fvd.facturaventa_codigofactventa=fv.codigofactventa'),
+            '2' => array('table' => 'billing_producto p', 'condition' => 'p.codigo=fvd.Producto_codigo'),
+            '3' => array('table' => 'bill_productoimpuestotarifa pit','condition'=>'pit.producto_id = p.codigo'),
+            '4' => array('table' => 'bill_impuestotarifa it','condition'=>'it.id = pit.impuestotarifa_id')
+        );
+        $productos = $this->ci->generic_model->get_join('billing_facturaventa fv', $where_data, $join_cluase, $fields);
+        return $productos;
     }
 }
