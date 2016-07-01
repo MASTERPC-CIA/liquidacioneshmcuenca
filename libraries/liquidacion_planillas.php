@@ -126,7 +126,7 @@ class liquidacion_planillas {
                         if ($marcas) {
                             $cont_marcas = 0;
                             foreach ($marcas as $index2 => $marca) {
-                                $productos = $this->get_prod_por_marca_y_aseg($fecha_desde, $fecha_hasta, $tipo_servicio, $tipo_paciente, $estado, $marca->id);
+                                $productos = $this->get_prod_por_marca_y_aseg($fecha_desde, $fecha_hasta, $tipo_servicio, $tipo_paciente, $estado, $marca->id, $grupo->id, $aseg->id_aseg);
                                 $sum_valor_prod = 0;
                                 $prod_iva_0 = 0;
                                 $sum_iva = 0;
