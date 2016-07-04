@@ -1,13 +1,7 @@
 <?php
-
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 echo tagcontent('div','<strong style="font-size:20px;">LISTADO GENERAL DE COMPRAS</strong>',array('class'=>'col-md-12','style'=>'text-align:center;'));
 echo lineBreak2(1, array('class'=>'clr'));
-    echo Open('form', array('method'=>'post','action'=>  base_url().'liquidacionhospital/compras/crud_compras','style'=>'margin-top:10px')); 
+    echo Open('form', array('method'=>'post','action'=>  base_url().'liquidacioneshmcuenca/compras/crud_compras','style'=>'margin-top:10px')); 
     echo input(array('type'=>'hidden','name'=>'supplier_id','id'=>'supplier_id'));
     echo Open('div',array('class'=>'col-md-3 form-group'));
         echo Open('div',array('class'=>'input-group has-warning'));

@@ -5,9 +5,8 @@ echo Open('div',array('class'=>'col-md-12','id'=>'consulta','style'=>  'font-siz
     echo Open('div', array('class'=>'col-md-12'));
         $this->load->view('common/hmc_head/encabezado_cuenca');
     echo Close('div'); 
-    echo '<CENTER><strong>LISTADO GENERAL DE COMPRAS</strong></CENTER>';
-    echo '<CENTER><strong>'.$nombre_bodega.'</strong></CENTER>';
-    echo '<center>PERIODO : '.$desde .' - '.$hasta.'</center><br>';
+    echo '<CENTER><strong>LISTADO GENERAL COMPRAS DE '.$nombre_bodega.'</strong></CENTER>';
+    echo '<CENTER><B>PERIODO:</B> '.$desde .' - '.$hasta.'</CENTER><br>';
    
         echo Open('table', array('class' => 'table table-striped table-condensed','border'=>'1','style'=>'font-size:'.get_settings('FONT_SIZE_FACT'),'width'=>'100%'));
             $thead = array('Nro.', 'Nombre del Proveedor', 'Sub. IVA 12%','Sub. IVA 0%','IVA 12%', 'TOTAL INCL. IVA','Nro. RETENC');
@@ -38,10 +37,5 @@ echo Open('div',array('class'=>'col-md-12','id'=>'consulta','style'=>  'font-siz
         echo Close('table');
    
         echo LineBreak(4, array('class'=>'clr'));
-        echo Open('div',array('class'=>'col-md-12','style'=>'text-align:center'));
-            echo tagcontent('span',$auxiliar_cont[0]->empleado);
-            echo LineBreak(1, array('class'=>'clr'));
-            echo tagcontent('span','<strong>AUXILIAR DE CONTABILIDAD DEL HG-III-DE TARQUI</strong>');
-        echo Close('div');
-        
+        $this->load->view('footer_liq_farmacia');
 echo Close('div'); 

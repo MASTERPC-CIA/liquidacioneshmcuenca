@@ -2,10 +2,12 @@
 
 echo tagcontent('button', '<span class="glyphicon glyphicon-print"></span> Imprimir', array('name' => 'btnPrint', 'class' => 'btn btn-warning col-md-1', 'id' => 'printbtn', 'type' => 'button','data-target' => 'consulta'));
 echo Open('div',array('class'=>'col-md-12','id'=>'consulta','style'=>  'font-size:'.get_settings('FONT_SIZE_FACT')));
-    echo '<CENTER>'. get_settings('RAZON_SOCIAL') .'</CENTER>';
-    echo '<CENTER>RESUMEN DE EXISTENCIAS DE FARMACIA</CENTER>';
-    echo '<CENTER>'.$nombre_bodega.'</CENTER>';
-    echo '<center>PERIODO : '.$desde .' - '.$hasta.'</center><br>';
+//    echo '<CENTER><B>'. get_settings('RAZON_SOCIAL') .'</B></CENTER><br><br>';
+    echo Open('div', array('class'=>'col-md-12'));
+        $this->load->view('common/hmc_head/encabezado_cuenca');
+    echo Close('div');
+    echo '<CENTER><B>RESUMEN DE EXISTENCIAS DE '.$nombre_bodega.'</B></CENTER>';
+    echo '<CENTER><B>PERIODO:</B> '.$desde .' - '.$hasta.'</CENTER><br>';
     
     echo Open('table', array('class' => 'table table-striped table-condensed','border'=>'1','style'=>'font-size:'.get_settings('FONT_SIZE_FACT'),'width'=>'100%'));
             $thead = array('ORDEN', 'ITEMS', "EXIST. ANTERIOR", 'COMPRAS SIN IVA', 'COMPRAS CON IVA','TOT. EXIST. + COMPRAS','VENTAS SIN IVA', 'VENTAS CON IVA','VENTAS UTIL.','EXIST. ACTUAL');
@@ -66,11 +68,5 @@ echo Open('div',array('class'=>'col-md-12','id'=>'consulta','style'=>  'font-siz
             echo Close('table');
             }
         echo LineBreak(4, array('class'=>'clr'));
-        
-        echo Open('div',array('class'=>'col-md-12','style'=>'text-align:center'));
-            echo tagcontent('span','<strong>'.$auxiliar_cont[0]->empleado.'</strong>' );
-            echo LineBreak(1, array('class'=>'clr'));
-            echo tagcontent('span','<strong>AUXILIAR DE CONTABILIDAD</strong>');
-        echo Close('div');
-        
+        $this->load->view('footer_liq_farmacia');
 echo Close('div'); 

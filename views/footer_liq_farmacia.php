@@ -1,8 +1,8 @@
 <?php
 
- echo Linebreak(2); 
-    echo Open('div',array('class'=>'col-sm-12'));
-//        echo '<CENTER>'.$firma.'</CENTER>';
-        echo '<CENTER>'.'MENA FREDDY'.'</CENTER>';
-        echo '<CENTER><b>AUXILIAR DE CONTABILIDAD DEL HG-III-DE TARQUI</b></CENTER>';
-    echo Close('div');
+echo Linebreak(2);
+echo Open('div', array('class' => 'col-md-12', 'style' => 'text-align:center'));
+    echo tagcontent('span', '<strong>' . $auxiliar_cont[0]->empleado . '</strong>');
+    echo LineBreak(1, array('class' => 'clr'));
+    echo tagcontent('span', '<strong>AUXILIAR DE CONTABILIDAD</strong>');
+echo Close('div');

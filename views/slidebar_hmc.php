@@ -35,7 +35,7 @@
                 <ul class="treeview-menu">
                     <li><a href="#/inventario_prod"><i class="fa fa-dashboard"></i> Inventario de Productos</a></li>
                     <li><a href="#/liqui_servicio"><i class="fa fa-dashboard"></i> Liquidaci&oacute;n del Servicio</a></li>
-                    <li><a href="#/honor_medicos"><i class="fa fa-dashboard"></i> Honorarios M&eacute;dicos</a></li>
+                    <!--<li><a href="#/honor_medicos"><i class="fa fa-dashboard"></i> Honorarios M&eacute;dicos</a></li>-->
                 </ul>
             </li>
 
