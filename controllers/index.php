@@ -271,5 +271,12 @@ class Index extends MX_Controller {
         $send['nombre_bodega'] = $this->generic_model->get('billing_bodega', array('id' => $data->bodega), 'nombre')[0];
         echo json_encode($send);
     }
+    function export_honorarios_to_excel($fecha_desde = '', $fecha_hasta = '') {
+        $this->load->model('reporte_models');
+
+        $res = $this->reporte_models->get_turnos($fecha_desde, $fecha_hasta);
+        $this->load->view('listado_honorarios_excel', $res);
+
+    }
 
 }
