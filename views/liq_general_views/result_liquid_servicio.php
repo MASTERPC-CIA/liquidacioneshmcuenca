@@ -1,13 +1,14 @@
 <?php
 echo tagcontent('button', '<span class="glyphicon glyphicon-print"></span> Imprimir', array('name' => 'btnPrint', 'class' => 'btn btn-warning col-md-1', 'id' => 'printbtn', 'type' => 'button','data-target' => 'consulta'));
-
 echo Open('div',array('class'=>'col-md-12','id'=>'consulta','style'=>'font-size:16px'));
     echo Open('div',array('class'=>'col-md-12'));
-        echo '<CENTER><b>'.get_settings('RAZON_SOCIAL').'</b></CENTER><BR>';
-        echo '<CENTER><b>LIQUIDACION</b></CENTER><BR>';
-        echo '<b>PERIODO : </b><BR>';
-        echo '<b>SERVICIO: </b><BR>';
-    
+//        echo '<CENTER><b>'.get_settings('RAZON_SOCIAL').'</b></CENTER><BR>';
+        echo Open('div', array('class'=>'col-md-12'));
+            $this->load->view('common/hmc_head/encabezado_cuenca');
+        echo Close('div');
+        echo '<CENTER><b>LIQUIDACION SERVICIO DE '.$nombreS.'</b></CENTER><BR>';
+        echo '<b>PERIODO : </b>'.$fecha_desde.' - '.$fecha_hasta.'<BR>';
+        
         echo Open('table',array('class'=>'table table-striped table-condensed','border'=>'1','style'=>'font-size:'.get_settings('FONT_SIZE_FACT'),'width'=>'100%'));
             echo Open('tr');
                 echo tagcontent('th', 'TIPO', array('width'=>'80%'));
@@ -17,15 +18,17 @@ echo Open('div',array('class'=>'col-md-12','id'=>'consulta','style'=>'font-size:
             echo Open('tr');
                 echo tagcontent('th', 'INGRESOS', array('colspan'=>'2', 'style'=>'text-align:center'));
             echo Close('tr');
-    //        foreach ($array as $value) { //Para los ingresos
+            $tot_ing=0;
+            foreach ($servicios as $value) { //Para los ingresos
                 echo Open('tr');
-                    echo tagcontent('td', '');
-                    echo tagcontent('td', '', array('align'=>'right'));
+                    echo tagcontent('td', $value['servicio']);
+                    echo tagcontent('td', number_decimal($value['totalS']), array('align'=>'right'));
                 echo Close('tr');
-    //        }
+                $tot_ing+=$value['totalS'];
+            }
             echo Open('tr');
                 echo tagcontent('th', 'TOTAL DE INGRESOS: ');
-                echo tagcontent('td', '');
+                echo tagcontent('td', number_decimal($tot_ing));
             echo Close('tr');
 
             echo Open('tr');

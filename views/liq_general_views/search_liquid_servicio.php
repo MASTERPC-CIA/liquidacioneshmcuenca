@@ -11,8 +11,8 @@ echo lineBreak2(1, array('class'=>'clr'));
         echo Close('div');
     echo Close('div');
     
-    $combo_depart = combobox($departamentos, array('label' => 'nombre', 'value' => 'idDepartamento'), array('class' => 'form-control input-sm', 'name' => 'depart_id'),TRUE);
-    echo get_combo_group('Departamento: ', $combo_depart, 'col-md-3 form-group has-warning');
+    $combo_depart = combobox($servicios_bodega, array('label' => 'dep_gp_descripcion', 'value' => 'dep_gp_id_grupo'), array('class' => 'form-control input-sm', 'name' => 'depart_id'),TRUE);
+    echo get_combo_group('Servicios: ', $combo_depart, 'col-md-3 form-group has-warning');
     
     echo tagcontent('button', '<span class="glyphicon glyphicon-search"></span> Buscar', array('type'=>'submit','id'=>'ajaxformbtn','data-target'=>'res_liq_serv_out','class'=>'btn btn-primary btn-sm'));
 echo Close('form');

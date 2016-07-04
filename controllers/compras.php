@@ -8,7 +8,7 @@ class Compras extends MX_Controller {
     }
 
     public function load_compras() {
-        $data['bodega'] = $this->generic_model->get_data('billing_bodega', array('deleted' => 0), 'id,nombre');
+        $data['bodega'] = $this->generic_model->get_data('billing_bodega', array('deleted' => 0, 'vistaweb'=>1), 'id,nombre');
         $this->load->view('compras_view', $data);
     }
 

@@ -11,7 +11,7 @@ class Liquidacion_general extends MX_Controller {
     protected $total_egresos; //Guarda el total de egresos liquidados
     protected $fact_cons_ext; //Guarda las facturas de consulta externa
     protected $fact_hospitaliz; //Guarda las facturas de Hospitalización
-    protected $fact_emergenc; // Guarda las facturas de Emergenecia
+    protected $fact_emergenc; // Guarda las facturas de Emergencia
     protected $consulta_id = 1;
 
     public function __construct() {
@@ -40,7 +40,7 @@ class Liquidacion_general extends MX_Controller {
     }
 
     public function load_view_search_liquid_servicio() {
-        $res['departamentos'] = $this->get_departamentos();
+        $res['servicios_bodega'] = $this->generic_model->get_all('hmc_servicio_grupo_bodega');
         $this->load->view('liq_general_views/search_liquid_servicio', $res);
     }
 
@@ -52,14 +52,31 @@ class Liquidacion_general extends MX_Controller {
     public function get_data_liquidacion() {
         $fecha_desde = $this->input->post('f_desde');
         $fecha_hasta = $this->input->post('f_hasta');
-        $id_grupo_dep = $this->get_dep_liquidacion($this->input->post('depart_id'));
-        if ($id_grupo_dep > 0) {
-//            $this->get_det_fact_por_servicio($fecha_desde, $fecha_hasta, $id_grupo_dep);
-            $this->load->view('liq_general_views/result_liquid_servicio');
+        $id_grupo_dep = $this->input->post('depart_id');
+        if (!empty($fecha_desde) and ! empty($fecha_hasta)) {
+            if ($fecha_desde <= $fecha_hasta) {
+                if ($id_grupo_dep != -1) {
+                    $tot_pla = $this->get_prod_pla_por_grupo($fecha_desde, $fecha_hasta, $id_grupo_dep)[0]->val_pla;
+                    $tot_fact = $this->get_prod_fact_por_grupo($fecha_desde, $fecha_hasta, $id_grupo_dep)[0]->val_fact;
+                    $nombreS = $this->generic_model->get_val_where('hmc_servicio_grupo_bodega', array('dep_gp_id_grupo'=>$id_grupo_dep), 'dep_gp_descripcion');
+                    $res['servicios'] = array(
+                        '0'=>array('servicio'=>$nombreS, 'totalS'=>$tot_fact+$tot_fact)
+                        );
+                    $res['fecha_desde'] = $fecha_desde;
+                    $res['fecha_hasta'] = $fecha_hasta;
+                    $res['nombreS'] = $nombreS;
+                    $this->load->view('liq_general_views/result_liquid_servicio', $res);
+                } else {
+                    echo info_msg('Debe seleccionar un servicio para buscar!!!');
+                }
+            } else {
+                echo info_msg('La fecha de incio debe ser menor o igual a la fecha final de busqueda!!!');
+            }
         } else {
-            echo info_msg('No existe un grupo de producto para el departamento seleccionado. ', '18px');
+            echo info_msg('Debe seleccionar un rango de fechas para buscar!!!');
         }
     }
+
     public function get_det_fact_por_servicio($fecha_desde, $fecha_hasta, $id_grupo_dep) {
         $list = null;
         $cont = 0;
@@ -178,30 +195,28 @@ class Liquidacion_general extends MX_Controller {
         echo json_encode($send);
     }
 
-    
     //Para obtener la liquidacion de las existencias
-    
-    public function get_inv_productos(){
+
+    public function get_inv_productos() {
         $id_grupo_dep = $this->get_dep_liquidacion($this->input->post('depart_id'));
         if ($id_grupo_dep > 0) {
             $this->load->view('liq_general_views/result_liquid_inv_prod');
         } else {
             echo info_msg('No existe un grupo de producto para el departamento seleccionado. ', '18px');
         }
-       
     }
-    
-    public function get_honor_medicos(){
+
+    public function get_honor_medicos() {
         $id_grupo_dep = $this->get_dep_liquidacion($this->input->post('depart_id'));
         if ($id_grupo_dep > 0) {
             $this->load->view('liq_general_views/result_honor_medicos');
         } else {
-            echo info_msg('No existe un grupo de producto para el departamento seleccionado. '.$this->input->post('depart_id'), '18px');
+            echo info_msg('No existe un grupo de producto para el departamento seleccionado. ' . $this->input->post('depart_id'), '18px');
         }
-       
     }
+
     //Funciones traidas desde recaudación
-     public function load_view_search_facts_serv() {
+    public function load_view_search_facts_serv() {
         $res['departamentos'] = $this->generic_model->get('billing_departamento', array('eliminado' => '0'), 'idDepartamento, nombre');
         $this->load->view('liq_recaudacion_views/search_fact_liquid_serv', $res);
     }
@@ -214,17 +229,48 @@ class Liquidacion_general extends MX_Controller {
             echo info_msg('No existe un grupo de producto para el servicio seleccionado. ' . $this->input->post('depart_id'), '18px');
         }
     }
-     
 
-//    public function get_dep_liquidacion($id_dep) {
-//        $res = $this->generic_model->get_val_where('hmc_departamento_grupo_prod', array('dep_gp_id_departamento' => $id_dep), 'dep_gp_id_grupo', null, -1);
-//        return $res;
-//    }
-      public function load_view_search_cons_ing_diario() {
+    public function load_view_search_cons_ing_diario() {
         $this->load->view('liq_recaudacion_views/search_cons_ing_diario');
     }
 
-      public function get_cons_ing_diario() {
+    public function get_cons_ing_diario() {
         $this->load->view('liq_recaudacion_views/result_cons_ing_diarios');
     }
+
+  
+    public function get_prod_fact_por_grupo($fecha_desde, $fecha_hasta, $id_grupo) {
+//        $fields = 'fvd.itemprecioxcantidadneto, fvd.ivaporcent, fvd.ivavalitemprecioneto, it.tarporcent, itemxcantidadprecioiva, ivavalprecioxcantidadneto';
+        $fields = 'sum(fvd.itemxcantidadprecioiva) val_fact';
+        $where_data = array('fv.fechaarchivada >= ' => $fecha_desde, 'fv.fechaarchivada <= ' => $fecha_hasta, 'fv.estado' => 2,
+            'fv.puntoventaempleado_tiposcomprobante_cod' => '01', 'p.productogrupo_codigo' => $id_grupo);
+        $join_cluase = array(
+            '0' => array('table' => 'billing_cliente bc', 'condition' => 'bc.PersonaComercio_cedulaRuc=fv.cliente_cedulaRuc'),
+            '1' => array('table' => 'billing_facturaventadetalle fvd', 'condition' => 'fvd.facturaventa_codigofactventa=fv.codigofactventa'),
+            '2' => array('table' => 'billing_producto p', 'condition' => 'p.codigo=fvd.Producto_codigo'),
+            '3' => array('table' => 'bill_productoimpuestotarifa pit', 'condition' => 'pit.producto_id = p.codigo'),
+            '4' => array('table' => 'bill_impuestotarifa it', 'condition' => 'it.id = pit.impuestotarifa_id')
+        );
+        $productos = $this->generic_model->get_join('billing_facturaventa fv', $where_data, $join_cluase, $fields);
+        return $productos;
+    }
+
+    public function get_prod_pla_por_grupo($fecha_desde, $fecha_hasta, $id_grupo) {
+//        $fields = 'pld.pdet_total itemprecioxcantidadneto, it.tarporcent';
+        $fields = 'sum(pld.pdet_total) val_pla';
+
+        $where_data = array('pl.pla_fecha_creacion >= ' => $fecha_desde, 'pl.pla_fecha_creacion <= ' => $fecha_hasta, 'pl.pla_estado >=' => 2, //OJO, analizar el estado de la planilla, por lo de los honorarios medicos
+            'p.productogrupo_codigo' => $id_grupo);
+
+        $join_cluase = array(
+            '0' => array('table' => 'billing_cliente bc', 'condition' => 'bc.PersonaComercio_cedulaRuc=pl.pla_cedula_cliente'),
+            '1' => array('table' => 'planillaje_det pld', 'condition' => 'pld.pdet_id_planillaje=pl.id'),
+            '2' => array('table' => 'billing_producto p', 'condition' => 'p.codigo=pld.pdet_id_cod_producto'),
+            '3' => array('table' => 'bill_productoimpuestotarifa pit', 'condition' => 'pit.producto_id = p.codigo'),
+            '4' => array('table' => 'bill_impuestotarifa it', 'condition' => 'it.id = pit.impuestotarifa_id')
+        );
+        $productos = $this->generic_model->get_join('planillaje pl', $where_data, $join_cluase, $fields);
+        return $productos;
+    }
+    
 }

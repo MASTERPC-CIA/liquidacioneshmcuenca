@@ -17,7 +17,7 @@ class Resumen_comp_vent extends MX_Controller {
     }
 
     public function load_resumen_view() {
-        $data['bodega'] = $this->generic_model->get_data('billing_bodega', array('deleted' => 0), 'id,nombre');
+        $data['bodega'] = $this->generic_model->get_data('billing_bodega', array('deleted' => 0, 'vistaweb'=>1), 'id,nombre');
         $this->load->view('search_resumen_exist', $data);
     }
 

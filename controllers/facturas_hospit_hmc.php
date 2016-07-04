@@ -8,7 +8,7 @@
 class Facturas_hospit_hmc extends MX_Controller {
 
     public function load_facturas_hospit() {
-        $data['bodega'] = $this->generic_model->get_data('billing_bodega', array('deleted' => 0), 'id,nombre');
+        $data['bodega'] = $this->generic_model->get_data('billing_bodega', array('deleted' => 0, 'vistaweb'=>1), 'id,nombre');
         $this->load->view('search_fact_hospit_hmc', $data);
     }
 
