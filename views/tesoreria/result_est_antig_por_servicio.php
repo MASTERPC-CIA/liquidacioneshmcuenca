@@ -31,7 +31,7 @@ echo Open('table', array('border'=>'1', 'style'=>'width:100%'));
             echo tagcontent('td', '');
             echo tagcontent('td', number_format($campo_tipo['serv_cons_ext'][0]->tot_comp_serv, get_settings('NUM_DECIMALES'), '.', ','));
             echo tagcontent('td', number_format(0 , get_settings('NUM_DECIMALES'), '.', ','));
-            echo tagcontent('td', number_format(0, get_settings('NUM_DECIMALES'), '.', ','));
+            echo tagcontent('td', number_format($campo_tipo['serv_cons_ext'][0]->tot_comp_serv, get_settings('NUM_DECIMALES'), '.', ','));
             echo tagcontent('td', '');
         echo Close('tr');
 //        }
@@ -41,7 +41,7 @@ echo Open('table', array('border'=>'1', 'style'=>'width:100%'));
             echo tagcontent('td', '');
             echo tagcontent('td', number_format($campo_tipo['serv_odont'][0]->tot_comp_serv, get_settings('NUM_DECIMALES'), '.', ','));
             echo tagcontent('td', number_format(0 , get_settings('NUM_DECIMALES'), '.', ','));
-            echo tagcontent('td', number_format(0, get_settings('NUM_DECIMALES'), '.', ','));
+            echo tagcontent('td', number_format($campo_tipo['serv_odont'][0]->tot_comp_serv, get_settings('NUM_DECIMALES'), '.', ','));
             echo tagcontent('td', '');
         echo Close('tr');
 
@@ -51,7 +51,7 @@ echo Open('table', array('border'=>'1', 'style'=>'width:100%'));
             echo tagcontent('td', '');
             echo tagcontent('td', number_format($campo_tipo['serv_hospit'][0]->tot_val_aseg, get_settings('NUM_DECIMALES'), '.', ','));
             echo tagcontent('td', number_format(0 , get_settings('NUM_DECIMALES'), '.', ','));
-            echo tagcontent('td', number_format(0, get_settings('NUM_DECIMALES'), '.', ','));
+            echo tagcontent('td', number_format($campo_tipo['serv_hospit'][0]->tot_val_aseg, get_settings('NUM_DECIMALES'), '.', ','));
             echo tagcontent('td', '');
         echo Close('tr');
 
@@ -61,17 +61,15 @@ echo Open('table', array('border'=>'1', 'style'=>'width:100%'));
             echo tagcontent('td', '');
             echo tagcontent('td', number_format($campo_tipo['serv_emerg'][0]->tot_val_aseg, get_settings('NUM_DECIMALES'), '.', ','));
             echo tagcontent('td', number_format(0 , get_settings('NUM_DECIMALES'), '.', ','));
-            echo tagcontent('td', number_format(0, get_settings('NUM_DECIMALES'), '.', ','));
+            echo tagcontent('td', number_format($campo_tipo['serv_emerg'][0]->tot_val_aseg, get_settings('NUM_DECIMALES'), '.', ','));
             echo tagcontent('td', '');
         echo Close('tr');
 
-
+        $sum = number_format($campo_tipo['serv_cons_ext'][0]->tot_comp_serv, get_settings('NUM_DECIMALES'), '.', ',')+number_format($campo_tipo['serv_odont'][0]->tot_comp_serv, get_settings('NUM_DECIMALES'), '.', ',')+number_format($campo_tipo['serv_hospit'][0]->tot_val_aseg, get_settings('NUM_DECIMALES'), '.', ',')+number_format($campo_tipo['serv_emerg'][0]->tot_val_aseg, get_settings('NUM_DECIMALES'), '.', ',');
     echo Open('tr', array('align'=>'right', 'style'=>'font-weight:900'));
-
         echo tagcontent('td', '<b>TOTAL</b>', array('colspan'=>'3'));
+        echo tagcontent('td', $sum);
         echo tagcontent('td', number_format(0, get_settings('NUM_DECIMALES'), '.', ','));
-        echo tagcontent('td', number_format(0, get_settings('NUM_DECIMALES'), '.', ','));
-        echo tagcontent('td', number_format(0, get_settings('NUM_DECIMALES'), '.', ','));
-
+        echo tagcontent('td',$sum);
     echo Close('tr');
 echo Close('table');

@@ -24,8 +24,8 @@ echo Open('table', array('border'=>'1', 'style'=>'width:100%'));
         echo tagcontent('td', '<b>OBSERVACION</b>');
 
     echo Close('tr');
-
-    foreach ($campo_tipo['lista_clientes'][0] as $value){
+    if($campo_tipo['lista_clientes']){
+        foreach ($campo_tipo['lista_clientes'][0] as $value){
         echo Open('tr', array('align'=>'right'));
             echo tagcontent('td', '', array('align'=>'left'));
             echo tagcontent('td', $value->ci);
@@ -45,4 +45,6 @@ echo Open('table', array('border'=>'1', 'style'=>'width:100%'));
         echo tagcontent('td', number_format($campo_tipo['total_aseg'], get_settings('NUM_DECIMALES'), '.', ','));
 
     echo Close('tr');
+    }
+    
 echo Close('table');

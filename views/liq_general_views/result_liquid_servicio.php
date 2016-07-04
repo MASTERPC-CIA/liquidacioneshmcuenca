@@ -28,7 +28,7 @@ echo Open('div',array('class'=>'col-md-12','id'=>'consulta','style'=>'font-size:
             }
             echo Open('tr');
                 echo tagcontent('th', 'TOTAL DE INGRESOS: ');
-                echo tagcontent('td', number_decimal($tot_ing));
+                echo tagcontent('td', number_decimal($tot_ing), array('align'=>'right'));
             echo Close('tr');
 
             echo Open('tr');
