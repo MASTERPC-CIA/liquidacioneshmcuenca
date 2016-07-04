@@ -7,7 +7,7 @@ echo Open('div',array('class'=>'col-md-12','id'=>'consulta','style'=>'font-size:
             $this->load->view('common/hmc_head/encabezado_cuenca');
         echo Close('div');
         echo '<CENTER><b>LIQUIDACION SERVICIO DE '.$nombreS.'</b></CENTER><BR>';
-        echo '<b>PERIODO : </b>'.$fecha_desde.' - '.$fecha_hasta.'<BR>';
+        echo '<b>PERIODO : </b>'.$fecha_desde.'  '.$fecha_hasta.'<BR>';
         
         echo Open('table',array('class'=>'table table-striped table-condensed','border'=>'1','style'=>'font-size:'.get_settings('FONT_SIZE_FACT'),'width'=>'100%'));
             echo Open('tr');
