@@ -131,15 +131,19 @@ class liquidacion_planillas {
                                 $prod_iva_0 = 0;
                                 $sum_iva = 0;
                                 $prod_otro_iva = 0;
+                                
                                 if ($productos) {
                                     foreach ($productos as $value) {
+                                        
                                         if ($value->tarporcent == 0) {
                                             $prod_iva_0+=$value->itemprecioxcantidadneto;
+                                            $iva =0;
                                         } else {
                                             $prod_otro_iva+=$value->itemprecioxcantidadneto;
-                                            $sum_iva+=$value->itemprecioxcantidadneto;
+                                            $iva=$value->itemprecioxcantidadneto*(get_settings('IVA')/100);
+                                            $sum_iva+=$iva;
                                         }
-                                        $sum_valor_prod+=$value->itemprecioxcantidadneto;
+                                        $sum_valor_prod+=($value->itemprecioxcantidadneto+$iva);
                                     }
                                     $list_marcas[$cont_marcas] = (Object) array('marca' => $marca, 'valor_total' => $sum_valor_prod, 'subtotal_0' => $prod_iva_0, 'subtotal_iva' => $prod_otro_iva, 'iva' => $sum_iva);
                                     $cont_marcas++;

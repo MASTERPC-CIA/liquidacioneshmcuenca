@@ -124,6 +124,7 @@ class Liquidacion_all_servicios {
                                     $prod_iva_0+=$value->itemprecioxcantidadneto;
                                 }else{
                                     $prod_otro_iva+=$value->itemprecioxcantidadneto;
+//                                    $sum_iva+=$value->ivavalprecioxcantidadneto;
                                     $sum_iva+=$value->ivavalprecioxcantidadneto;
                                 }
                                 $sum_valor_prod+=$value->itemxcantidadprecioiva;
