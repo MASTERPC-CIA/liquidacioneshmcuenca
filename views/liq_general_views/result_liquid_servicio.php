@@ -11,34 +11,51 @@ echo Open('div',array('class'=>'col-md-12','id'=>'consulta','style'=>'font-size:
         
         echo Open('table',array('class'=>'table table-striped table-condensed','border'=>'1','style'=>'font-size:'.get_settings('FONT_SIZE_FACT'),'width'=>'100%'));
             echo Open('tr');
-                echo tagcontent('th', 'TIPO', array('width'=>'80%'));
-                echo tagcontent('th', 'TOTAL', array('width'=>'20%'));
-            echo Close('tr');
-
-            echo Open('tr');
                 echo tagcontent('th', 'INGRESOS', array('colspan'=>'2', 'style'=>'text-align:center'));
             echo Close('tr');
+            echo Open('tr');
+                echo tagcontent('th', 'TIPO CLIENTE Y SERVICIO', array('width'=>'80%'));
+                echo tagcontent('th', 'TOTAL', array('width'=>'20%'));
+            echo Close('tr');
             $tot_ing=0;
-            foreach ($servicios as $value) { //Para los ingresos
-                echo Open('tr');
-                    echo tagcontent('td', $value['servicio']);
-                    echo tagcontent('td', number_decimal($value['totalS']), array('align'=>'right'));
-                echo Close('tr');
-                $tot_ing+=$value['totalS'];
+            if($ing_facturas){
+                foreach ($ing_facturas['list_ingresos'] as $value) {
+                    echo Open('tr');
+                        echo tagcontent('td', $value->descrip_ing);
+                        echo tagcontent('td', number_decimal($value->valor_ing), array('align'=>'right'));
+                    echo Close('tr');
+                }
+                $tot_ing +=$ing_facturas['tot_val'];
+            }
+            if($ing_planillas){
+                foreach ($ing_planillas['list_ingresos'] as $value) {
+                    echo Open('tr');
+                        echo tagcontent('td', $value->descrip_ing);
+                        echo tagcontent('td', number_decimal($value->valor_ing), array('align'=>'right'));
+                    echo Close('tr');
+                }
+                $tot_ing +=$ing_planillas['tot_val'];
             }
             echo Open('tr');
                 echo tagcontent('th', 'TOTAL DE INGRESOS: ');
                 echo tagcontent('td', number_decimal($tot_ing), array('align'=>'right'));
             echo Close('tr');
-
+        echo Close('table');
+        
+        echo Open('table',array('class'=>'table table-striped table-condensed','border'=>'1','style'=>'font-size:'.get_settings('FONT_SIZE_FACT'),'width'=>'100%'));
+//            echo Open('tr');
+//                echo tagcontent('th', 'EGRESOS', array('colspan'=>'2', 'style'=>'text-align:center' ));
+//            echo Close('tr');
             echo Open('tr');
-                echo tagcontent('th', 'EGRESOS', array('colspan'=>'2', 'style'=>'text-align:center' ));
+                echo tagcontent('th', 'EGRESOS', array('width'=>'80%'));
+                echo tagcontent('th', 'TOTAL', array('width'=>'20%'));
             echo Close('tr');
+            
 
     //        foreach ($array as $value) {//Para los egresos
                 echo Open('tr');
-                    echo tagcontent('td', '');
-                    echo tagcontent('td', '', array('align'=>'right'));
+                    echo tagcontent('td', 'HABERES ESPECIALISTAS');
+                    echo tagcontent('td', number_decimal($egr_fact), array('align'=>'right'));
                 echo Close('tr');
     //        }
 
@@ -58,16 +75,16 @@ echo Open('div',array('class'=>'col-md-12','id'=>'consulta','style'=>'font-size:
 
             echo Open('tr');
                 echo tagcontent('td', '<b>INGRESOS</b>', array('width'=>'80%'));
-                echo tagcontent('td', '<b>'.'</b>', array('align'=>'right', 'width'=>'20%'));
+                echo tagcontent('td',number_decimal($tot_ing) , array('align'=>'right', 'width'=>'20%'));
             echo Close('tr');
 
             echo Open('tr');
                 echo tagcontent('td', '<b>EGRESOS</b>');
-                echo tagcontent('td', '<b>'.'</b>', array('align'=>'right'));
+                echo tagcontent('td', number_decimal($egr_fact), array('align'=>'right'));
             echo Close('tr');
             echo Open('tr');
                 echo tagcontent('td', '<b>SALDO A FAVOR</b>');
-                echo tagcontent('td', '<b>'.'</b>', array('align'=>'right'));
+                echo tagcontent('td',number_decimal($tot_ing)-number_decimal($egr_fact) , array('align'=>'right'));
             echo Close('tr');
         echo Close('table');
     echo Close('div');

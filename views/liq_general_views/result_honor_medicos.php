@@ -24,9 +24,8 @@ echo Open('div',array('class'=>'col-md-12','id'=>'consulta','style'=>'font-size:
             echo Close('tr');
             $tot_val_serv=0;
             $total_porcet=0;
+            $cont=1;
             if($clientes_fact){
-                $cont=1;
-               
                 foreach ($clientes_fact as $value) { //Para los ingresos
                     $val_estudio_fact = ($value->valor*($porcent/100));
                     echo Open('tr');
