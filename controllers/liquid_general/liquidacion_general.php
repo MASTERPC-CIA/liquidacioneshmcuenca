@@ -13,7 +13,7 @@ class Liquidacion_general extends MX_Controller {
     protected $fact_hospitaliz; //Guarda las facturas de Hospitalización
     protected $fact_emergenc; // Guarda las facturas de Emergencia
     protected $consulta_id = 1;
-
+    protected  $grupo_imagen = 331;
     public function __construct() {
         parent::__construct();
     }
@@ -70,7 +70,7 @@ class Liquidacion_general extends MX_Controller {
                     echo info_msg('Debe seleccionar un servicio para buscar!!!');
                 }
             } else {
-                echo info_msg('La fecha de incio debe ser menor o igual a la fecha final de busqueda!!!');
+                echo info_msg('La fecha de inicio debe ser menor o igual a la fecha final de busqueda!!!');
             }
         } else {
             echo info_msg('Debe seleccionar un rango de fechas para buscar!!!');
@@ -207,14 +207,22 @@ class Liquidacion_general extends MX_Controller {
     }
 
     public function get_honor_medicos() {
-        $id_grupo_dep = $this->input->post('depart_id');
+        $id_grupo = $this->input->post('depart_id');
         $fecha_desde = $this->input->post('f_desde');
         $fecha_hasta = $this->input->post('f_hasta');
         if (!empty($fecha_desde && !empty($fecha_hasta))) {
             if ($fecha_desde <= $fecha_hasta) {
-                if ($id_grupo_dep != -1) {
-                    $res['clientes_fact'] = $
-                    $this->load->view('liq_general_views/result_honor_medicos');
+                if ($id_grupo != -1) {
+                    $res['fecha_desde'] = $fecha_desde;
+                    $res['fecha_hasta'] = $fecha_hasta;
+                    if($id_grupo == $this->grupo_imagen){
+                        $res['porcent'] = get_settings('PORC_MED_RADIOLOGOS');
+                    }
+                   
+                    $res['nombreS'] = $this->generic_model->get_val_where('hmc_servicio_grupo_bodega', array('dep_gp_id_grupo'=>$id_grupo), 'dep_gp_descripcion');
+                    $res['clientes_fact'] = $this->get_clientes_estudio_serv_fact($fecha_desde, $fecha_hasta, $id_grupo);
+                    $res['clientes_plan'] = $this->get_clientes_estudio_serv_pla($fecha_desde, $fecha_hasta, $id_grupo);
+                    $this->load->view('liq_general_views/result_honor_medicos', $res);
                 } else {
                     echo info_msg('Debe seleccionar un servicio.', '18px');
                 }
@@ -227,7 +235,7 @@ class Liquidacion_general extends MX_Controller {
     }
 
     public function get_clientes_estudio_serv_fact($fecha_desde, $fecha_hasta, $id_grupo) {
-        $fields = 'fv.fecha_archivada, concat(bc.nombres, bc.apellidos) nombres, bst.tipo, bct.abreviatura, p.nombreUnico, fvd.itemxcantidadprecioiva';
+        $fields = 'fv.fechaarchivada, concat(bc.nombres, bc.apellidos) nombres, bst.tipo, bct.abreviatura, p.nombreUnico, fvd.itemxcantidadprecioiva valor';
 
         $where_data = array('fv.fechaarchivada >= ' => $fecha_desde, 'fv.fechaarchivada <= ' => $fecha_hasta, 'fv.estado' => 2,
             'fv.puntoventaempleado_tiposcomprobante_cod' => '01', 'p.productogrupo_codigo' => $id_grupo);
@@ -253,7 +261,7 @@ class Liquidacion_general extends MX_Controller {
             '1' => array('table' => 'planillaje_det pld', 'condition' => 'pld.pdet_id_planillaje=pl.id'),
             '2' => array('table' => 'billing_producto p', 'condition' => 'p.codigo=pld.pdet_id_cod_producto'),
             '3' => array('table' => 'billing_clientetipo bct', 'condition' => 'bct.idclientetipo=bc.clientetipo_idclientetipo'),
-            '4' => array('table' => 'bill_sttiposervicio bst', 'condition' => 'bst.id=fv.servicio_hmc'),
+            '4' => array('table' => 'bill_sttiposervicio bst', 'condition' => 'bst.id=pl.pla_tipo'),
         );
         $productos = $this->generic_model->get_join('planillaje pl', $where_data, $join_cluase, $fields);
         return $productos;
