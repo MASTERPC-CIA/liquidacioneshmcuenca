@@ -48,7 +48,7 @@ class Liquid_recaudacion extends MX_Controller {
                 $res['efectivo'] = $this->servicio_consulta_externa->get_fact_pago_efectivo_pacientes($fecha_desde, $fecha_hasta);
                 $res['credito'] = $this->servicio_consulta_externa->get_fact_pago_credito_pacientes($fecha_desde, $fecha_hasta);
 
-                //Emergencia
+                //Emergencia Pacientes Civiles
                 $res['emerg_efectivo'] = $this->servicio_emerg_hospit->get_fact_pago_efectivo_emergencia($fecha_desde, $fecha_hasta);
                 $res['emerg_credito'] = $this->servicio_emerg_hospit->get_fact_pago_credito_emergencia($fecha_desde, $fecha_hasta);
                 //Hospitalizados
@@ -58,9 +58,13 @@ class Liquid_recaudacion extends MX_Controller {
                 //Desglose de Ingresos Diarios
                 //Emergencia
                 $res['desg_emerg_efectivo'] = $this->servicio_emerg_hospit->get_desglose_emergencia($fecha_desde, $fecha_hasta);
+//                Emergencia para pacientes con aseguradora
+//                $res['desg_emerg_efectivo'] = $this->servicio_emerg_hospit->get_desglose_emergencia($fecha_desde, $fecha_hasta);
                 $res['desg_emerg_credito'] = $this->servicio_emerg_hospit->get_desglose_emergencia_aseguradoras($fecha_desde, $fecha_hasta);
                 //Hospitalización
                 $res['desg_hospit_efectivo'] = $this->servicio_emerg_hospit->get_desglose_hospitalizacion($fecha_desde, $fecha_hasta);
+                //Hospitalizados pacientes con aseguradora
+//                $res['desg_hospit_efectivo'] = $this->servicio_emerg_hospit->get_desglose_hospitalizacion($fecha_desde, $fecha_hasta);
                 $res['desg_hospit_credito'] = $this->servicio_emerg_hospit->get_desglose_hospitaliz_aseguradoras($fecha_desde, $fecha_hasta);
 
                 $this->load->view('recaudacion/result_ing_diarios', $res);

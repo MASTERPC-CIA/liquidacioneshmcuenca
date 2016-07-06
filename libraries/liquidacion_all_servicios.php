@@ -43,11 +43,11 @@ class Liquidacion_all_servicios {
         return $marcas;
     }
 
-    public function get_productos_por_marca($fecha_desde, $fecha_hasta, $tipo_servicio, $tipo_pago, $tipo_comprobante, $id_marca) {
+    public function get_productos_por_marca($fecha_desde, $fecha_hasta, $tipo_servicio, $tipo_pago, $tipo_comprobante, $id_marca, $id_grupo) {
         $fields = 'fvd.itemprecioxcantidadneto, fvd.ivaporcent, fvd.ivavalitemprecioneto, it.tarporcent, itemxcantidadprecioiva, ivavalprecioxcantidadneto';
         $where_data = array('fv.tipo_pago' => $tipo_pago, 'fv.servicio_hmc' => $tipo_servicio,
             'fv.fechaarchivada >= ' => $fecha_desde, 'fv.fechaarchivada <= ' => $fecha_hasta, 'fv.estado' => 2,
-            'fv.puntoventaempleado_tiposcomprobante_cod' => $tipo_comprobante, 'p.marca_id' => $id_marca);
+            'fv.puntoventaempleado_tiposcomprobante_cod' => $tipo_comprobante, 'p.marca_id' => $id_marca, 'p.productogrupo_codigo' => $id_grupo);
         $join_cluase = array(
             '0' => array('table' => 'billing_facturaventadetalle fvd', 'condition' => 'fvd.facturaventa_codigofactventa=fv.codigofactventa'),
             '1' => array('table' => 'billing_producto p', 'condition' => 'p.codigo=fvd.Producto_codigo'),
@@ -113,7 +113,7 @@ class Liquidacion_all_servicios {
                 if ($marcas) {
                     $cont_marcas = 0;
                     foreach ($marcas as $index2 => $marca) {
-                        $productos = $this->get_productos_por_marca($fecha_desde, $fecha_hasta, $tipo_servicio, $tipo_pago, $tipo_comprobante, $marca->id);
+                        $productos = $this->get_productos_por_marca($fecha_desde, $fecha_hasta, $tipo_servicio, $tipo_pago, $tipo_comprobante, $marca->id, $grupo->id);
                         $sum_valor_prod = 0;
                         $prod_iva_0=0; 
                         $sum_iva=0;

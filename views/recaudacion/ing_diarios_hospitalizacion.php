@@ -2,7 +2,7 @@
 
 echo Open('table',array('class'=>'table table-striped table-condensed','border'=>'1','style'=>'font-size:'.get_settings('FONT_SIZE_FACT'),'width'=>'100%'));
     echo Open('tr');
-        echo tagcontent('td', '<b>PLANILLA CIVILES SERVICIO '.$hospit_efectivo['nombre_servicio'].', PAGO EFECTIVO</b>', array('style'=>'text-align:center', 'colspan'=>'5'));
+        echo tagcontent('td', '<b>PLANILLA CIVILES SERVICIO '.$hospit_efectivo['nombre_servicio'].'</b>', array('style'=>'text-align:center', 'colspan'=>'5'));
     echo Close('tr');
     echo Open('tr');
         echo tagcontent('th', 'NRO. FACT.', array('width'=>'10%'));
@@ -38,7 +38,7 @@ echo Close('table');
 
 echo Open('table',array('class'=>'table table-striped table-condensed','border'=>'1','style'=>'font-size:'.get_settings('FONT_SIZE_FACT'),'width'=>'100%'));
     echo Open('tr');
-        echo tagcontent('td', '<b>SERVICIO '.$hospit_credito['nombre_servicio'].', PAGO CRÉDITO</b>', array('style'=>'text-align:center', 'colspan'=>'5'));
+        echo tagcontent('td', '<b>PLANILLAS DE HOSPITALIZACION PARA PACIENTES CON ASEGURADORA </b>', array('style'=>'text-align:center', 'colspan'=>'5'));
     echo Close('tr');
        
     if($hospit_credito['list_aseg']){
