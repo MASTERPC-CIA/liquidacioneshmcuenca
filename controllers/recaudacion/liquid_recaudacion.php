@@ -59,12 +59,12 @@ class Liquid_recaudacion extends MX_Controller {
                 //Emergencia
                 $res['desg_emerg_efectivo'] = $this->servicio_emerg_hospit->get_desglose_emergencia($fecha_desde, $fecha_hasta);
 //                Emergencia para pacientes con aseguradora
-//                $res['desg_emerg_efectivo'] = $this->servicio_emerg_hospit->get_desglose_emergencia($fecha_desde, $fecha_hasta);
+                $res['desg_emerg_efect_ase'] = $this->servicio_emerg_hospit->get_desglose_emergencia_aseg_fact($fecha_desde, $fecha_hasta);
                 $res['desg_emerg_credito'] = $this->servicio_emerg_hospit->get_desglose_emergencia_aseguradoras($fecha_desde, $fecha_hasta);
                 //Hospitalización
                 $res['desg_hospit_efectivo'] = $this->servicio_emerg_hospit->get_desglose_hospitalizacion($fecha_desde, $fecha_hasta);
                 //Hospitalizados pacientes con aseguradora
-//                $res['desg_hospit_efectivo'] = $this->servicio_emerg_hospit->get_desglose_hospitalizacion($fecha_desde, $fecha_hasta);
+                $res['desg_hospit_efect_aseg'] = $this->servicio_emerg_hospit->get_desglose_hospitaliz_aseg_fact($fecha_desde, $fecha_hasta);
                 $res['desg_hospit_credito'] = $this->servicio_emerg_hospit->get_desglose_hospitaliz_aseguradoras($fecha_desde, $fecha_hasta);
 
                 $this->load->view('recaudacion/result_ing_diarios', $res);
@@ -77,8 +77,8 @@ class Liquid_recaudacion extends MX_Controller {
 //    public function save_liq_ingresos_diarios($fecha_desde, $fecha_hasta, $efectivo_cli, $efectivo_cext, $efectivo_hosp, $efectivo_emerg, $credito_cext, $credito_hosp, $credito_emerg){
     public function save_liq_ingresos_diarios($fecha_desde, $fecha_hasta) {
         //Guarda la liquidación actual, guarda el id de la misma para guarda el detalle
-        $fecha_act=date('Y-m-d', time());
-        $fecha_liq = $this->generic_model->get('liquidacionhmc', array('liq_fechaDesde'=>$fecha_desde,'liq_fechaHasta'=>$fecha_hasta, 'liq_fechaCreacion'=>$fecha_act, 'liq_tipo'=>$this->liq_ing_diarios));
+        $fecha_act = date('Y-m-d', time());
+        $fecha_liq = $this->generic_model->get('liquidacionhmc', array('liq_fechaDesde' => $fecha_desde, 'liq_fechaHasta' => $fecha_hasta, 'liq_fechaCreacion' => $fecha_act, 'liq_tipo' => $this->liq_ing_diarios));
 
         if (!$fecha_liq) {
             $id_liq = $this->liquidaciones->save_liquidacion($fecha_desde, $fecha_hasta, $this->liq_ing_diarios);

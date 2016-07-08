@@ -102,7 +102,7 @@ echo Close('table');
 
 echo Open('table',array('class'=>'table table-striped table-condensed','border'=>'1','style'=>'font-size:'.get_settings('FONT_SIZE_FACT'),'width'=>'100%'));
     echo Open('tr');
-        echo tagcontent('td', '<b>SERVICIO '.$credito['nombre_serv_credito'].', PAGO CRÉDITO</b>', array('style'=>'text-align:center', 'colspan'=>'4'));
+        echo tagcontent('td', '<b>SERVICIO '.$credito['nombre_serv'].', PAGO CRÉDITO</b>', array('style'=>'text-align:center', 'colspan'=>'4'));
     echo Close('tr');
        
     if($credito['list_aseg']){
@@ -153,10 +153,10 @@ echo Open('table',array('class'=>'table table-striped table-condensed','border'=
     }
     
     echo Open('tr');
-        echo tagcontent('td', '<b>TOTAL SERVICIO '.$credito['nombre_serv_credito'].':</b>', array('style'=>'text-align:right'));
+        echo tagcontent('td', '<b>TOTAL SERVICIO '.$credito['nombre_serv'].':</b>', array('style'=>'text-align:right'));
         echo tagcontent('td', '', array('style'=>'text-align:right'));
-        echo tagcontent('td', number_format($credito['total_serv_credito'], get_settings('NUM_DECIMALES'), '.', ''), array('style'=>'text-align:right'));
-        echo tagcontent('td', number_format($credito['total_serv_credito'], get_settings('NUM_DECIMALES'), '.', ''), array('style'=>'text-align:right'));
+        echo tagcontent('td', number_format($credito['total_serv'], get_settings('NUM_DECIMALES'), '.', ''), array('style'=>'text-align:right'));
+        echo tagcontent('td', number_format($credito['total_serv'], get_settings('NUM_DECIMALES'), '.', ''), array('style'=>'text-align:right'));
     echo Close('tr');
     
 echo Close('table');
