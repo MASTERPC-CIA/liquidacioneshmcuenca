@@ -21,8 +21,8 @@ echo Open('form', array('method'=>'post', 'action'=>  base_url('liquidacioneshmc
                 echo tagcontent('td', '<b>CE. CAMP.</b>');
                 echo tagcontent('td', '<b>CE. MSP</b>');
                 echo tagcontent('td', '<b>CE. SPPAT</b>');
-                echo tagcontent('td', '<b>PLAN. HOSP.</b>');
                 echo tagcontent('td', '<b>PLAN. EMERG.</b>');
+                echo tagcontent('td', '<b>PLAN. HOSP.</b>');
                 echo tagcontent('td', '<b>CRED. SUCRE</b>');
                 echo tagcontent('td', '<b>CRED. ISSFA</b>');
                 echo tagcontent('td', '<b>CRED. IESS</b>');
