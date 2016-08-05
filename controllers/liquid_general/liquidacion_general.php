@@ -13,8 +13,9 @@ class Liquidacion_general extends MX_Controller {
     protected $fact_hospitaliz; //Guarda las facturas de Hospitalización
     protected $fact_emergenc; // Guarda las facturas de Emergencia
     protected $consulta_id = 1;
-    protected $grupo_imagen = 331;
+    protected $grupo_imagen = 281;
     protected $comp_factura = '01';
+    protected $comp_egreso_Serv = '59';
     protected $paciente_civil = 14;
 
     public function __construct() {
@@ -60,8 +61,8 @@ class Liquidacion_general extends MX_Controller {
             if ($fecha_desde <= $fecha_hasta) {
                 if ($id_grupo != -1) {
                     $nombreS = $this->generic_model->get_val_where('hmc_servicio_grupo_bodega', array('dep_gp_id_grupo' => $id_grupo), 'dep_gp_descripcion');
-                    $res['ing_facturas'] = $this->get_ing_fact_por_grupo($fecha_desde, $fecha_hasta, $id_grupo);
-                    $res['ing_planillas'] = $this->get_ing_pla_por_grupo($fecha_desde, $fecha_hasta, $id_grupo);
+                    $res['ing_facturas'] = $this->get_ing_fact_por_grupo($fecha_desde, $fecha_hasta, $id_grupo, $this->comp_factura);
+                    $res['ing_planillas'] = $this->get_ing_pla_por_grupo($fecha_desde, $fecha_hasta, $id_grupo, $this->comp_egreso_Serv);
                     if ($id_grupo == $this->grupo_imagen) {
                         $porcent = get_settings('PORC_MED_RADIOLOGOS');
                     } else {
@@ -148,17 +149,17 @@ class Liquidacion_general extends MX_Controller {
     }
 
     //Funciones utiles para obtener la liquidacion por servicios 
-    public function get_ing_fact_por_grupo($fecha_desde, $fecha_hasta, $id_grupo) {
-        $servicios = $this->get_servicios_por_factura($fecha_desde, $fecha_hasta, $id_grupo);
+    public function get_ing_fact_por_grupo($fecha_desde, $fecha_hasta, $id_grupo, $tipo_comp) {
+        $servicios = $this->get_servicios_por_factura($fecha_desde, $fecha_hasta, $id_grupo, $tipo_comp);
         $list_val = array();
         $tot_val_fact = 0;
         if ($servicios) {
             $cont = 0;
             foreach ($servicios as $key => $serv) {
-                $tipos_cliente = $this->get_tipos_cliente_por_servicio($fecha_desde, $fecha_hasta, $id_grupo, $serv->id_serv);
+                $tipos_cliente = $this->get_tipos_cliente_por_servicio($fecha_desde, $fecha_hasta, $id_grupo, $serv->id_serv, $tipo_comp);
                 if ($tipos_cliente) {
                     foreach ($tipos_cliente as $key => $tipoC) {
-                        $tot_prod = $this->get_tot_prod_por_serv_y_tipo($fecha_desde, $fecha_hasta, $id_grupo, $serv->id_serv, $tipoC->id_cliente_tipo);
+                        $tot_prod = $this->get_tot_prod_por_serv_y_tipo($fecha_desde, $fecha_hasta, $id_grupo, $serv->id_serv, $tipoC->id_cliente_tipo, $tipo_comp);
                         $descripcion = $tipoC->tipo_cliente . ' ' . $serv->tipo_serv;
                         $list_val[$cont] = (Object) array('descrip_ing' => $descripcion, 'valor_ing' => $tot_prod[0]->val_total);
                         $tot_val_fact +=$tot_prod[0]->val_total;
@@ -172,12 +173,12 @@ class Liquidacion_general extends MX_Controller {
         return $send;
     }
 
-    public function get_servicios_por_factura($fecha_desde, $fecha_hasta, $id_grupo) {
+    public function get_servicios_por_factura($fecha_desde, $fecha_hasta, $id_grupo, $tipo_comp) {
         $fields = 'DISTINCT(bst.id) id_serv, bst.tipo tipo_serv';
-        $where_data = array('fv.tipo_pago' => '1', 'fv.puntoventaempleado_tiposcomprobante_cod' => $this->comp_factura,
+        $where_data = array('fv.tipo_pago' => '1', 'fv.puntoventaempleado_tiposcomprobante_cod' => $tipo_comp,
             'fv.fechaarchivada >= ' => $fecha_desde, 'fv.fechaarchivada <= ' => $fecha_hasta, 'fv.estado' => 2,
-            'p.productogrupo_codigo' => $id_grupo, 'fv.servicio_hmc <= ' => 1 //OJO verificar que solo tome facturas que pagan en efectivo y del servicio de cnsulta externa es decir los pacientes civiles
-        );
+            'p.productogrupo_codigo' => $id_grupo //', fv.servicio_hmc <= ' => 1, //OJO verificar que solo tome facturas que pagan en efectivo y del servicio de cnsulta externa es decir los pacientes civiles
+            );
         $join_cluase = array(
             '0' => array('table' => 'bill_sttiposervicio bst', 'condition' => 'bst.id=fv.servicio_hmc'),
             '1' => array('table' => 'billing_facturaventadetalle fvd', 'condition' => 'fvd.facturaventa_codigofactventa=fv.codigofactventa'),
@@ -189,9 +190,9 @@ class Liquidacion_general extends MX_Controller {
         return $servicios;
     }
 
-    public function get_tipos_cliente_por_servicio($fecha_desde, $fecha_hasta, $id_grupo, $id_servicio) {
+    public function get_tipos_cliente_por_servicio($fecha_desde, $fecha_hasta, $id_grupo, $id_servicio, $tipo_comp) {
         $fields = 'DISTINCT(bct.idclientetipo) id_cliente_tipo, bct.tipo tipo_cliente';
-        $where_data = array('fv.tipo_pago' => '1', 'fv.puntoventaempleado_tiposcomprobante_cod' => $this->comp_factura,
+        $where_data = array('fv.tipo_pago' => '1', 'fv.puntoventaempleado_tiposcomprobante_cod' => $tipo_comp,
             'fv.fechaarchivada >= ' => $fecha_desde, 'fv.fechaarchivada <= ' => $fecha_hasta, 'fv.estado' => 2,
             'p.productogrupo_codigo' => $id_grupo, 'fv.servicio_hmc' => $id_servicio
         );
@@ -206,9 +207,9 @@ class Liquidacion_general extends MX_Controller {
         return $tipos_client;
     }
 
-    public function get_tot_prod_por_serv_y_tipo($fecha_desde, $fecha_hasta, $id_grupo, $id_servicio, $id_tipo) {
+    public function get_tot_prod_por_serv_y_tipo($fecha_desde, $fecha_hasta, $id_grupo, $id_servicio, $id_tipo, $tipo_comp) {
         $fields = 'sum(fvd.itemxcantidadprecioiva) val_total';
-        $where_data = array('fv.tipo_pago' => '1', 'fv.puntoventaempleado_tiposcomprobante_cod' => $this->comp_factura,
+        $where_data = array('fv.tipo_pago' => '1', 'fv.puntoventaempleado_tiposcomprobante_cod' => $tipo_comp,
             'fv.fechaarchivada >= ' => $fecha_desde, 'fv.fechaarchivada <= ' => $fecha_hasta, 'fv.estado' => 2,
             'p.productogrupo_codigo' => $id_grupo, 'fv.servicio_hmc' => $id_servicio, 'bc.clientetipo_idclientetipo' => $id_tipo
         );
