@@ -26,7 +26,7 @@ class reporte_integrado_ing extends MX_Controller {
     private $seg_msp = 24; //Id seguro Ministerio de salud publica OJO cambiar por id del seguro
     private $seg_sppat = 25; //Id seguro Soat OJO cambiar por id del seguro
     private $liq_integrado_mensual = 2;
-
+private $comp_serv=59;
     public function __construct() {
         parent::__construct();
         $this->load->library('rep_integ_mensual');
@@ -59,12 +59,19 @@ class reporte_integrado_ing extends MX_Controller {
                 $res['hospitaliz_efect'] = $this->rep_integ_mensual->get_tot_grupo_servicio_factura($fecha_desde, $fecha_hasta, $this->hospitaliz, $this->tipo_comprobante, $this->pago_efectivo, $grupos);
                 //Consulta Externa 
                 //Crédito get_tot_grupo_servicio_aseg($fecha_desde, $fecha_hasta, $tipo_servicio, $tipo_comprobante, $tipo_pago, $lista_grupos, $id_aseg)
-                $res['CE_SUCRE'] = $this->rep_integ_mensual->get_tot_grupo_servicio_aseg($fecha_desde, $fecha_hasta, $this->cons_externa, $this->tipo_comprobante, $this->pago_credito, $grupos, $this->seg_sucre);
-                $res['CE_ISSFA'] = $this->rep_integ_mensual->get_tot_grupo_servicio_aseg($fecha_desde, $fecha_hasta, $this->cons_externa, $this->tipo_comprobante, $this->pago_credito, $grupos, $this->seg_issfa);
-                $res['CE_IESS'] = $this->rep_integ_mensual->get_tot_grupo_servicio_aseg($fecha_desde, $fecha_hasta, $this->cons_externa, $this->tipo_comprobante, $this->pago_credito, $grupos, $this->seg_iess);
-                $res['CE_CAMPESINO'] = $this->rep_integ_mensual->get_tot_grupo_servicio_aseg($fecha_desde, $fecha_hasta, $this->cons_externa, $this->tipo_comprobante, $this->pago_credito, $grupos, $this->seg_campesino);
-                $res['CE_MSP'] = $this->rep_integ_mensual->get_tot_grupo_servicio_aseg($fecha_desde, $fecha_hasta, $this->cons_externa, $this->tipo_comprobante, $this->pago_credito, $grupos, $this->seg_msp);
-                $res['CE_SPPAT'] = $this->rep_integ_mensual->get_tot_grupo_servicio_aseg($fecha_desde, $fecha_hasta, $this->cons_externa, $this->tipo_comprobante, $this->pago_credito, $grupos, $this->seg_sppat);
+                $res['CE_SUCRE'] = $this->rep_integ_mensual->get_tot_grupo_servicio_aseg($fecha_desde, $fecha_hasta, $this->cons_externa, $this->comp_serv, $this->pago_credito, $grupos, $this->seg_sucre);
+                $res['CE_ISSFA'] = $this->rep_integ_mensual->get_tot_grupo_servicio_aseg($fecha_desde, $fecha_hasta, $this->cons_externa, $this->comp_serv, $this->pago_credito, $grupos, $this->seg_issfa);
+                $res['CE_IESS'] = $this->rep_integ_mensual->get_tot_grupo_servicio_aseg($fecha_desde, $fecha_hasta, $this->cons_externa, $this->comp_serv, $this->pago_credito, $grupos, $this->seg_iess);
+                $res['CE_CAMPESINO'] = $this->rep_integ_mensual->get_tot_grupo_servicio_aseg($fecha_desde, $fecha_hasta, $this->cons_externa, $this->comp_serv, $this->pago_credito, $grupos, $this->seg_campesino);
+                $res['CE_MSP'] = $this->rep_integ_mensual->get_tot_grupo_servicio_aseg($fecha_desde, $fecha_hasta, $this->cons_externa, $this->comp_serv, $this->pago_credito, $grupos, $this->seg_msp);
+                $res['CE_SPPAT'] = $this->rep_integ_mensual->get_tot_grupo_servicio_aseg($fecha_desde, $fecha_hasta, $this->cons_externa, $this->comp_serv, $this->pago_credito, $grupos, $this->seg_sppat);
+
+//                $res['CE_SUCRE'] = $this->rep_integ_mensual->get_tot_grupo_servicio_aseg($fecha_desde, $fecha_hasta, $this->cons_externa, $this->tipo_comprobante, $this->pago_credito, $grupos, $this->seg_sucre);
+//                $res['CE_ISSFA'] = $this->rep_integ_mensual->get_tot_grupo_servicio_aseg($fecha_desde, $fecha_hasta, $this->cons_externa, $this->tipo_comprobante, $this->pago_credito, $grupos, $this->seg_issfa);
+//                $res['CE_IESS'] = $this->rep_integ_mensual->get_tot_grupo_servicio_aseg($fecha_desde, $fecha_hasta, $this->cons_externa, $this->tipo_comprobante, $this->pago_credito, $grupos, $this->seg_iess);
+//                $res['CE_CAMPESINO'] = $this->rep_integ_mensual->get_tot_grupo_servicio_aseg($fecha_desde, $fecha_hasta, $this->cons_externa, $this->tipo_comprobante, $this->pago_credito, $grupos, $this->seg_campesino);
+//                $res['CE_MSP'] = $this->rep_integ_mensual->get_tot_grupo_servicio_aseg($fecha_desde, $fecha_hasta, $this->cons_externa, $this->tipo_comprobante, $this->pago_credito, $grupos, $this->seg_msp);
+//                $res['CE_SPPAT'] = $this->rep_integ_mensual->get_tot_grupo_servicio_aseg($fecha_desde, $fecha_hasta, $this->cons_externa, $this->tipo_comprobante, $this->pago_credito, $grupos, $this->seg_sppat);
 
                 //Planillas Hospitalizacion
                 $res['H_SUCRE'] = $this->rep_integ_mensual->get_tot_grupo_servicio_planilla($fecha_desde, $fecha_hasta, $this->cod_paciente_civil, $this->estado_planilla, $grupos, $this->seg_sucre, $this->hospitaliz);

@@ -49,8 +49,8 @@ echo Open('form', array('method'=>'post', 'action'=>  base_url('liquidacioneshmc
                     echo tagcontent('td', number_format($H_CAMPESINO['list_tot_x_grupo'][$cont]->val_tot_grupo+$E_CAMPESINO['list_tot_x_grupo'][$cont]->val_tot_grupo, get_settings('NUM_DECIMALES'), '.', ','));
                     echo tagcontent('td', number_format($H_MSP['list_tot_x_grupo'][$cont]->val_tot_grupo+$E_MSP['list_tot_x_grupo'][$cont]->val_tot_grupo, get_settings('NUM_DECIMALES'), '.', ','));
                     echo tagcontent('td', number_format($H_SPPAT['list_tot_x_grupo'][$cont]->val_tot_grupo+$E_SPPAT['list_tot_x_grupo'][$cont]->val_tot_grupo, get_settings('NUM_DECIMALES'), '.', ','));
-                    $cont++;
                 echo Close('tr');
+                $cont++;
             }
             echo Open('tr', array('align'=>'right', 'style'=>'font-weight:900'));
                 echo tagcontent('td', '<b>TOTAL</b>', array('align'=>'center'));
