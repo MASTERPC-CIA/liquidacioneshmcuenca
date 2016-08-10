@@ -109,7 +109,7 @@ class rep_integ_mensual {
         if ($lista_grupos) {
             $cont_gp = 0;
             foreach ($lista_grupos as $grupo) {
-                $productos = $this->get_prod_x_grupo_factura($fecha_desde, $fecha_hasta, $tipo_servicio, $tipo_pago, $tipo_comprobante, $grupo->id, $id_aseg);
+                $productos = $this->get_prod_x_grupo_factura_aseg($fecha_desde, $fecha_hasta, $tipo_servicio, $tipo_pago, $tipo_comprobante, $grupo->id, $id_aseg);
                 $sum_valor_prod = 0;
                 if ($productos) {
                     foreach ($productos as $value) {
@@ -147,6 +147,18 @@ class rep_integ_mensual {
         $productos = $this->ci->generic_model->get_join('billing_facturaventa fv', $where_data, $join_cluase, $fields);
         return $productos;
     }
-
+public function get_prod_x_grupo_factura_aseg($fecha_desde, $fecha_hasta, $tipo_servicio, $tipo_pago, $tipo_comprobante, $id_grupo, $id_aseg) {
+        $fields = 'fvd.itemxcantidadprecioiva';
+        $where_data = array('fv.tipo_pago' => $tipo_pago, 'fv.servicio_hmc' => $tipo_servicio,
+            'fv.fechaarchivada >= ' => $fecha_desde, 'fv.fechaarchivada <= ' => $fecha_hasta, 'fv.estado' => 2,
+            'fv.puntoventaempleado_tiposcomprobante_cod' => $tipo_comprobante, 'p.productogrupo_codigo' => $id_grupo, 'bc.clientetipo_idclientetipo !=' => 14, 'bc.aseguradora_id'=>$id_aseg);
+        $join_cluase = array(
+            '0' => array('table' => 'billing_facturaventadetalle fvd', 'condition' => 'fvd.facturaventa_codigofactventa=fv.codigofactventa'),
+            '1' => array('table' => 'billing_producto p', 'condition' => 'p.codigo=fvd.Producto_codigo'),
+            '2' => array('table' => 'billing_cliente bc', 'condition' => 'bc.PersonaComercio_cedulaRuc=fv.cliente_cedulaRuc'),
+        );
+        $productos = $this->ci->generic_model->get_join('billing_facturaventa fv', $where_data, $join_cluase, $fields);
+        return $productos;
+    }
 
 }

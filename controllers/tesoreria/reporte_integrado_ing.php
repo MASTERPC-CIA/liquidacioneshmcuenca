@@ -26,7 +26,7 @@ class reporte_integrado_ing extends MX_Controller {
     private $seg_msp = 24; //Id seguro Ministerio de salud publica OJO cambiar por id del seguro
     private $seg_sppat = 25; //Id seguro Soat OJO cambiar por id del seguro
     private $liq_integrado_mensual = 2;
-private $comp_serv=59;
+    private $comp_serv=59;
     public function __construct() {
         parent::__construct();
         $this->load->library('rep_integ_mensual');
