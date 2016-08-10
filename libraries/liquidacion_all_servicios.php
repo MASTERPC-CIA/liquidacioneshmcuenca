@@ -63,7 +63,7 @@ class Liquidacion_all_servicios {
 
         $where_data = array('fv.tipo_pago' => $tipo_pago, 'fv.servicio_hmc' => $tipo_servicio,
             'fv.fechaarchivada >= ' => $fecha_desde, 'fv.fechaarchivada <= ' => $fecha_hasta, 'fv.estado' => 2,
-            'fv.puntoventaempleado_tiposcomprobante_cod' => $tipo_comprobante);
+            'fv.puntoventaempleado_tiposcomprobante_cod' => $tipo_comprobante, 'bc.clientetipo_idclientetipo !=' => 14 );
 
         $join_cluase = array(
             '0' => array('table' => 'billing_cliente bc', 'condition' => 'bc.PersonaComercio_cedulaRuc=fv.cliente_cedulaRuc'),
@@ -78,7 +78,7 @@ class Liquidacion_all_servicios {
         $fields = 'DISTINCT(g.codigo) id, g.nombre';
         $where_data = array('fv.tipo_pago' => $tipo_pago, 'fv.servicio_hmc' => $tipo_servicio,
             'fv.fechaarchivada >= ' => $fecha_desde, 'fv.fechaarchivada <= ' => $fecha_hasta, 'fv.estado' => 2,
-            'fv.puntoventaempleado_tiposcomprobante_cod' => $tipo_comprobante, 'ag.id' => $id_aseg);
+            'fv.puntoventaempleado_tiposcomprobante_cod' => $tipo_comprobante, 'ag.id' => $id_aseg, 'bc.clientetipo_idclientetipo !=' => 14);
         $join_cluase = array(
             '0' => array('table' => 'billing_cliente bc', 'condition' => 'bc.PersonaComercio_cedulaRuc=fv.cliente_cedulaRuc'),
             '1' => array('table' => 'aseguradoras ag', 'condition' => 'ag.id=bc.aseguradora_id'),
@@ -289,7 +289,7 @@ class Liquidacion_all_servicios {
         $fields = 'DISTINCT(m.id) id, m.nombre';
         $where_data = array('fv.tipo_pago' => $tipo_pago, 'fv.servicio_hmc' => $tipo_servicio,
             'fv.fechaarchivada >= ' => $fecha_desde, 'fv.fechaarchivada <= ' => $fecha_hasta, 'fv.estado' => 2,
-            'fv.puntoventaempleado_tiposcomprobante_cod' => $tipo_comprobante, 'p.productogrupo_codigo' => $id_grupo, 'bc.aseguradora_id' => $id_aseg);
+            'fv.puntoventaempleado_tiposcomprobante_cod' => $tipo_comprobante, 'p.productogrupo_codigo' => $id_grupo, 'bc.aseguradora_id' => $id_aseg, 'bc.clientetipo_idclientetipo !=' => 14);
         $join_cluase = array(
             '0' => array('table' => 'billing_cliente bc', 'condition' => 'bc.PersonaComercio_cedulaRuc=fv.cliente_cedulaRuc'),
             '1' => array('table' => 'billing_facturaventadetalle fvd', 'condition' => 'fvd.facturaventa_codigofactventa=fv.codigofactventa'),
@@ -305,7 +305,7 @@ class Liquidacion_all_servicios {
         $fields = 'fvd.itemprecioxcantidadneto, fvd.ivaporcent, fvd.ivavalitemprecioneto, it.tarporcent, itemxcantidadprecioiva, ivavalprecioxcantidadneto';
         $where_data = array('fv.tipo_pago' => $tipo_pago, 'fv.servicio_hmc' => $tipo_servicio,
             'fv.fechaarchivada >= ' => $fecha_desde, 'fv.fechaarchivada <= ' => $fecha_hasta, 'fv.estado' => 2,
-            'fv.puntoventaempleado_tiposcomprobante_cod' => $tipo_comprobante, 'p.marca_id' => $id_marca, 'p.productogrupo_codigo' => $id_grupo, 'bc.aseguradora_id' => $id_aseg);
+            'fv.puntoventaempleado_tiposcomprobante_cod' => $tipo_comprobante, 'p.marca_id' => $id_marca, 'p.productogrupo_codigo' => $id_grupo, 'bc.aseguradora_id' => $id_aseg, 'bc.clientetipo_idclientetipo !=' => 14);
         $join_cluase = array(
             '0' => array('table' => 'billing_cliente bc', 'condition' => 'bc.PersonaComercio_cedulaRuc=fv.cliente_cedulaRuc'),
             '1' => array('table' => 'billing_facturaventadetalle fvd', 'condition' => 'fvd.facturaventa_codigofactventa=fv.codigofactventa'),
@@ -317,4 +317,133 @@ class Liquidacion_all_servicios {
         return $productos;
     }
 
+    public function get_valores_liquid_por_servicio_new($fecha_desde, $fecha_hasta, $tipo_servicio, $tipo_pago, $tipo_comprobante, $tipo_query) {
+
+        $grupos = $this->get_grupos_producto_new($fecha_desde, $fecha_hasta, $tipo_servicio, $tipo_pago, $tipo_comprobante, $tipo_query);
+
+        $total_grupos = 0;
+        $tot_grupos_iva_0 = 0;
+        $tot_grupos_otro_iva = 0;
+        $tot_grupos_iva = 0;
+        $list_grupos = array();
+
+        if ($grupos) {
+            $cont_grupos = 0;
+            foreach ($grupos as $index1 => $grupo) {
+                $total_marcas = 0;
+                $tot_marcas_iva_0 = 0;
+                $tot_marcas_otro_iva = 0;
+                $tot_marcas_iva = 0;
+                $list_marcas = array();
+                $marcas = $this->get_marcas_producto_por_grupo_new($fecha_desde, $fecha_hasta, $tipo_servicio, $tipo_pago, $tipo_comprobante, $grupo->id, $tipo_query);
+                if ($marcas) {
+                    $cont_marcas = 0;
+                    foreach ($marcas as $index2 => $marca) {
+                        $productos = $this->get_productos_por_marca_new($fecha_desde, $fecha_hasta, $tipo_servicio, $tipo_pago, $tipo_comprobante, $marca->id, $grupo->id, $tipo_query);
+                        $sum_valor_prod = 0;
+                        $prod_iva_0 = 0;
+                        $sum_iva = 0;
+                        $prod_otro_iva = 0;
+                        if ($productos) {
+                            foreach ($productos as $value) {
+                                if ($value->ivaporcent == 0) {
+                                    $prod_iva_0+=$value->itemprecioxcantidadneto;
+                                } else {
+                                    $prod_otro_iva+=$value->itemprecioxcantidadneto;
+                                    $sum_iva+=$value->ivavalprecioxcantidadneto;
+                                }
+                                $sum_valor_prod+=$value->itemxcantidadprecioiva;
+                            }
+                            $list_marcas[$cont_marcas] = (Object) array('marca' => $marca, 'valor_total' => $sum_valor_prod, 'subtotal_0' => $prod_iva_0, 'subtotal_iva' => $prod_otro_iva, 'iva' => $sum_iva);
+                            $cont_marcas++;
+
+                            $total_marcas+=$sum_valor_prod;
+                            $tot_marcas_iva_0+=$prod_iva_0;
+                            $tot_marcas_otro_iva = $prod_otro_iva;
+                            $tot_marcas_iva+=$sum_iva;
+                        }
+                    }
+                    $list_grupos[$cont_grupos] = (Object) array('grupo' => $grupo, 'lista_marcas' => $list_marcas, 'valor_grupo' => $total_marcas, 'val_iva_0' => $tot_marcas_iva_0, 'val_otro_iva' => $tot_marcas_otro_iva, 'val_iva' => $tot_marcas_iva);
+                    $cont_grupos++;
+                    $total_grupos+=$total_marcas;
+                    $tot_grupos_iva_0+=$tot_marcas_iva_0;
+                    $tot_grupos_otro_iva+=$tot_marcas_otro_iva;
+                    $tot_grupos_iva+=$tot_marcas_iva;
+                }
+            }
+        }
+        $send['list'] = $list_grupos;
+        $send['total_servicio'] = $total_grupos;
+        $send['tot_serv_iva_0'] = $tot_grupos_iva_0;
+        $send['tot_serv_otro_iva'] = $tot_grupos_otro_iva;
+        $send['tot_serv_iva'] = $tot_grupos_iva;
+        $send['nombre_servicio'] = $this->get_name_servicio($tipo_servicio);
+        return $send;
+    }
+
+    public function get_grupos_producto_new($fecha_desde, $fecha_hasta, $tipo_servicio, $tipo_pago, $tipo_comprobante, $tipo_query) {
+        $fields = 'DISTINCT(g.codigo) id, g.nombre';
+        $where_data = array('fv.tipo_pago' => $tipo_pago, 'fv.servicio_hmc' => $tipo_servicio,
+            'fv.fechaarchivada >= ' => $fecha_desde, 'fv.fechaarchivada <= ' => $fecha_hasta, 'fv.estado' => 2,
+            'fv.puntoventaempleado_tiposcomprobante_cod' => $tipo_comprobante);
+        if($tipo_query==1){
+            $where_data['bc.clientetipo_idclientetipo']=14; //Paciente civil
+        }else{
+            $where_data['bc.clientetipo_idclientetipo !=']=14; //Paciente civil
+        }
+        $join_cluase = array(
+            '0' => array('table' => 'billing_facturaventadetalle fvd', 'condition' => 'fvd.facturaventa_codigofactventa=fv.codigofactventa'),
+            '1' => array('table' => 'billing_producto p', 'condition' => 'p.codigo=fvd.Producto_codigo'),
+            '2' => array('table' => 'billing_productogrupo g', 'condition' => 'g.codigo=p.productogrupo_codigo'),
+            '3' => array('table' => 'billing_cliente bc', 'condition' => 'bc.PersonaComercio_cedulaRuc=fv.cliente_cedulaRuc'),
+        );
+
+        $grupos = $this->ci->generic_model->get_join('billing_facturaventa fv', $where_data, $join_cluase, $fields);
+        return $grupos;
+    }
+
+    public function get_marcas_producto_por_grupo_new($fecha_desde, $fecha_hasta, $tipo_servicio, $tipo_pago, $tipo_comprobante, $id_grupo, $tipo_query) {
+        $fields = 'DISTINCT(m.id) id, m.nombre';
+        $where_data = array('fv.tipo_pago' => $tipo_pago, 'fv.servicio_hmc' => $tipo_servicio,
+            'fv.fechaarchivada >= ' => $fecha_desde, 'fv.fechaarchivada <= ' => $fecha_hasta, 'fv.estado' => 2,
+            'fv.puntoventaempleado_tiposcomprobante_cod' => $tipo_comprobante, 'p.productogrupo_codigo' => $id_grupo);
+        if($tipo_query==1){
+            $where_data['bc.clientetipo_idclientetipo']=14; //Paciente civil
+        }else{
+            $where_data['bc.clientetipo_idclientetipo !=']=14; //Paciente civil
+        }
+        
+        $join_cluase = array(
+            '0' => array('table' => 'billing_facturaventadetalle fvd', 'condition' => 'fvd.facturaventa_codigofactventa=fv.codigofactventa'),
+            '1' => array('table' => 'billing_producto p', 'condition' => 'p.codigo=fvd.Producto_codigo'),
+            '2' => array('table' => 'billing_marca m', 'condition' => 'm.id=p.marca_id'),
+            '3' => array('table' => 'billing_cliente bc', 'condition' => 'bc.PersonaComercio_cedulaRuc=fv.cliente_cedulaRuc'),
+        );
+
+        $marcas = $this->ci->generic_model->get_join('billing_facturaventa fv', $where_data, $join_cluase, $fields);
+        return $marcas;
+    }
+
+    public function get_productos_por_marca_new($fecha_desde, $fecha_hasta, $tipo_servicio, $tipo_pago, $tipo_comprobante, $id_marca, $id_grupo, $tipo_query) {
+        $fields = 'fvd.itemprecioxcantidadneto, fvd.ivaporcent, fvd.ivavalitemprecioneto, it.tarporcent, itemxcantidadprecioiva, ivavalprecioxcantidadneto';
+        $where_data = array('fv.tipo_pago' => $tipo_pago, 'fv.servicio_hmc' => $tipo_servicio,
+            'fv.fechaarchivada >= ' => $fecha_desde, 'fv.fechaarchivada <= ' => $fecha_hasta, 'fv.estado' => 2,
+            'fv.puntoventaempleado_tiposcomprobante_cod' => $tipo_comprobante, 'p.marca_id' => $id_marca, 'p.productogrupo_codigo' => $id_grupo);
+        if($tipo_query==1){
+            $where_data['bc.clientetipo_idclientetipo']=14; //Paciente civil
+        }else{
+            $where_data['bc.clientetipo_idclientetipo !=']=14; //Paciente civil
+        }
+        $join_cluase = array(
+            '0' => array('table' => 'billing_facturaventadetalle fvd', 'condition' => 'fvd.facturaventa_codigofactventa=fv.codigofactventa'),
+            '1' => array('table' => 'billing_producto p', 'condition' => 'p.codigo=fvd.Producto_codigo'),
+            '2' => array('table' => 'bill_productoimpuestotarifa pit', 'condition' => 'pit.producto_id = p.codigo'),
+            '3' => array('table' => 'bill_impuestotarifa it', 'condition' => 'it.id = pit.impuestotarifa_id'),
+            '4' => array('table' => 'billing_cliente bc', 'condition' => 'bc.PersonaComercio_cedulaRuc=fv.cliente_cedulaRuc'),
+        );
+        $productos = $this->ci->generic_model->get_join('billing_facturaventa fv', $where_data, $join_cluase, $fields);
+        return $productos;
+    }
+    
+    
 }

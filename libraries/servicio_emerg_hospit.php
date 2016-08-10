@@ -45,12 +45,12 @@ class servicio_emerg_hospit {
 
     //para obtener los totales de las facturas de las planillas a civiles por emergencia
     public function get_desglose_emergencia($fecha_desde, $fecha_hasta) {
-        return $this->ci->liquidacion_all_servicios->get_valores_liquid_por_servicio($fecha_desde, $fecha_hasta, $this->cod_emergencia, $this->tipo_pago_efectivo, $this->comprob_factura);
+        return $this->ci->liquidacion_all_servicios->get_valores_liquid_por_servicio_new($fecha_desde, $fecha_hasta, $this->cod_emergencia, $this->tipo_pago_efectivo, $this->comprob_factura, 1);
     }
 
     //para obtener los totales de las facturas de las planillas a civiles por hospitalizacion
     public function get_desglose_hospitalizacion($fecha_desde, $fecha_hasta) {
-        return $this->ci->liquidacion_all_servicios->get_valores_liquid_por_servicio($fecha_desde, $fecha_hasta, $this->cod_hospitalizacion, $this->tipo_pago_efectivo, $this->comprob_factura);
+        return $this->ci->liquidacion_all_servicios->get_valores_liquid_por_servicio_new($fecha_desde, $fecha_hasta, $this->cod_hospitalizacion, $this->tipo_pago_efectivo, $this->comprob_factura, 1);
     }
 
     //Para obtener los totales de las facturas de planilla que pagan las aseguradoras para emergencia

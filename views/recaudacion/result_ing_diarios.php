@@ -19,7 +19,9 @@ echo Open('form', array('method'=>'get', 'action'=>  base_url('liquidacioneshmcu
             echo '<CENTER><b>PLANILLAS SERVICIO HOSPITALIZACION</b></CENTER><BR>';
             //Carga la vista de los servicios de hospitalización facturados al contado
             $this->load->view('recaudacion/ing_diarios_hospitalizacion');
-
+            echo LineBreak(4);
+            $this->load->view('recaudacion/footer_recaudacion');
+            echo LineBreak(2);
             echo '<CENTER><b>DESGLOSE DE INGRESOS DIARIOS PLANILLAS DE EMERGENCIA</b></CENTER><BR>';
             //Carga la vista del desglose de ingresos diarios por emergencia
             $this->load->view('recaudacion/desg_ing_diarios_emerg');
