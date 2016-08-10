@@ -24,9 +24,9 @@ class reporte_integrado_ing extends MX_Controller {
     private $seg_iess = 3; //Id aseguradora IESS, agregar otro para el seguro voluntario
     private $seg_campesino = 5; //Id Seguro Campesino
     private $seg_msp = 24; //Id seguro Ministerio de salud publica OJO cambiar por id del seguro
-    private $seg_sppat = 25; //Id seguro Soat OJO cambiar por id del seguro
+        private $seg_sppat = 25; //Id seguro Soat OJO cambiar por id del seguro
     private $liq_integrado_mensual = 2;
-    private $comp_serv=59;
+private $comp_serv=59;
     public function __construct() {
         parent::__construct();
         $this->load->library('rep_integ_mensual');
@@ -74,20 +74,33 @@ class reporte_integrado_ing extends MX_Controller {
 //                $res['CE_SPPAT'] = $this->rep_integ_mensual->get_tot_grupo_servicio_aseg($fecha_desde, $fecha_hasta, $this->cons_externa, $this->tipo_comprobante, $this->pago_credito, $grupos, $this->seg_sppat);
 
                 //Planillas Hospitalizacion
-                $res['H_SUCRE'] = $this->rep_integ_mensual->get_tot_grupo_servicio_planilla($fecha_desde, $fecha_hasta, $this->cod_paciente_civil, $this->estado_planilla, $grupos, $this->seg_sucre, $this->hospitaliz);
-                $res['H_ISSFA'] = $this->rep_integ_mensual->get_tot_grupo_servicio_planilla($fecha_desde, $fecha_hasta, $this->cod_paciente_civil, $this->estado_planilla, $grupos, $this->seg_issfa, $this->hospitaliz);
-                $res['H_IESS'] = $this->rep_integ_mensual->get_tot_grupo_servicio_planilla($fecha_desde, $fecha_hasta, $this->cod_paciente_civil, $this->estado_planilla, $grupos, $this->seg_iess, $this->hospitaliz);
-                $res['H_CAMPESINO'] = $this->rep_integ_mensual->get_tot_grupo_servicio_planilla($fecha_desde, $fecha_hasta, $this->cod_paciente_civil, $this->estado_planilla, $grupos, $this->seg_campesino, $this->hospitaliz);
-                $res['H_MSP'] = $this->rep_integ_mensual->get_tot_grupo_servicio_planilla($fecha_desde, $fecha_hasta, $this->cod_paciente_civil, $this->estado_planilla, $grupos, $this->seg_msp, $this->hospitaliz);
-                $res['H_SPPAT'] = $this->rep_integ_mensual->get_tot_grupo_servicio_planilla($fecha_desde, $fecha_hasta, $this->cod_paciente_civil, $this->estado_planilla, $grupos, $this->seg_sppat, $this->hospitaliz);
+//                $res['H_SUCRE'] = $this->rep_integ_mensual->get_tot_grupo_servicio_planilla($fecha_desde, $fecha_hasta, $this->cod_paciente_civil, $this->estado_planilla, $grupos, $this->seg_sucre, $this->hospitaliz);
+//                $res['H_ISSFA'] = $this->rep_integ_mensual->get_tot_grupo_servicio_planilla($fecha_desde, $fecha_hasta, $this->cod_paciente_civil, $this->estado_planilla, $grupos, $this->seg_issfa, $this->hospitaliz);
+//                $res['H_IESS'] = $this->rep_integ_mensual->get_tot_grupo_servicio_planilla($fecha_desde, $fecha_hasta, $this->cod_paciente_civil, $this->estado_planilla, $grupos, $this->seg_iess, $this->hospitaliz);
+//                $res['H_CAMPESINO'] = $this->rep_integ_mensual->get_tot_grupo_servicio_planilla($fecha_desde, $fecha_hasta, $this->cod_paciente_civil, $this->estado_planilla, $grupos, $this->seg_campesino, $this->hospitaliz);
+//                $res['H_MSP'] = $this->rep_integ_mensual->get_tot_grupo_servicio_planilla($fecha_desde, $fecha_hasta, $this->cod_paciente_civil, $this->estado_planilla, $grupos, $this->seg_msp, $this->hospitaliz);
+//                $res['H_SPPAT'] = $this->rep_integ_mensual->get_tot_grupo_servicio_planilla($fecha_desde, $fecha_hasta, $this->cod_paciente_civil, $this->estado_planilla, $grupos, $this->seg_sppat, $this->hospitaliz);
+
+                $res['H_SUCRE'] = $this->rep_integ_mensual->get_tot_grupo_servicio_aseg($fecha_desde, $fecha_hasta, $this->hospitaliz, $this->comp_serv, $this->pago_credito, $grupos, $this->seg_sucre);
+                $res['H_ISSFA'] = $this->rep_integ_mensual->get_tot_grupo_servicio_aseg($fecha_desde, $fecha_hasta, $this->hospitaliz, $this->comp_serv, $this->pago_credito, $grupos, $this->seg_issfa);
+                $res['H_IESS'] = $this->rep_integ_mensual->get_tot_grupo_servicio_aseg($fecha_desde, $fecha_hasta, $this->hospitaliz, $this->comp_serv, $this->pago_credito, $grupos, $this->seg_iess);
+                $res['H_CAMPESINO'] = $this->rep_integ_mensual->get_tot_grupo_servicio_aseg($fecha_desde, $fecha_hasta, $this->hospitaliz, $this->comp_serv, $this->pago_credito, $grupos, $this->seg_campesino);
+                $res['H_MSP'] = $this->rep_integ_mensual->get_tot_grupo_servicio_aseg($fecha_desde, $fecha_hasta, $this->hospitaliz, $this->comp_serv, $this->pago_credito, $grupos, $this->seg_msp);
+                $res['H_SPPAT'] = $this->rep_integ_mensual->get_tot_grupo_servicio_aseg($fecha_desde, $fecha_hasta, $this->hospitaliz, $this->comp_serv, $this->pago_credito, $grupos, $this->seg_sppat);
 
                 //Planillas Emergencia
-                $res['E_SUCRE'] = $this->rep_integ_mensual->get_tot_grupo_servicio_planilla($fecha_desde, $fecha_hasta, $this->cod_paciente_civil, $this->estado_planilla, $grupos, $this->seg_sucre, $this->emergencia);
-                $res['E_ISSFA'] = $this->rep_integ_mensual->get_tot_grupo_servicio_planilla($fecha_desde, $fecha_hasta, $this->cod_paciente_civil, $this->estado_planilla, $grupos, $this->seg_issfa, $this->emergencia);
-                $res['E_IESS'] = $this->rep_integ_mensual->get_tot_grupo_servicio_planilla($fecha_desde, $fecha_hasta, $this->cod_paciente_civil, $this->estado_planilla, $grupos, $this->seg_iess, $this->emergencia);
-                $res['E_CAMPESINO'] = $this->rep_integ_mensual->get_tot_grupo_servicio_planilla($fecha_desde, $fecha_hasta, $this->cod_paciente_civil, $this->estado_planilla, $grupos, $this->seg_campesino, $this->emergencia);
-                $res['E_MSP'] = $this->rep_integ_mensual->get_tot_grupo_servicio_planilla($fecha_desde, $fecha_hasta, $this->cod_paciente_civil, $this->estado_planilla, $grupos, $this->seg_msp, $this->emergencia);
-                $res['E_SPPAT'] = $this->rep_integ_mensual->get_tot_grupo_servicio_planilla($fecha_desde, $fecha_hasta, $this->cod_paciente_civil, $this->estado_planilla, $grupos, $this->seg_sppat, $this->emergencia);
+                $res['E_SUCRE'] = $this->rep_integ_mensual->get_tot_grupo_servicio_aseg($fecha_desde, $fecha_hasta, $this->emergencia, $this->comp_serv, $this->pago_credito, $grupos, $this->seg_sucre);
+                $res['E_ISSFA'] = $this->rep_integ_mensual->get_tot_grupo_servicio_aseg($fecha_desde, $fecha_hasta, $this->emergencia, $this->comp_serv, $this->pago_credito, $grupos, $this->seg_issfa);
+                $res['E_IESS'] = $this->rep_integ_mensual->get_tot_grupo_servicio_aseg($fecha_desde, $fecha_hasta, $this->emergencia, $this->comp_serv, $this->pago_credito, $grupos, $this->seg_iess);
+                $res['E_CAMPESINO'] = $this->rep_integ_mensual->get_tot_grupo_servicio_aseg($fecha_desde, $fecha_hasta, $this->emergencia, $this->comp_serv, $this->pago_credito, $grupos, $this->seg_campesino);
+                $res['E_MSP'] = $this->rep_integ_mensual->get_tot_grupo_servicio_aseg($fecha_desde, $fecha_hasta, $this->emergencia, $this->comp_serv, $this->pago_credito, $grupos, $this->seg_msp);
+                $res['E_SPPAT'] =$this->rep_integ_mensual->get_tot_grupo_servicio_aseg($fecha_desde, $fecha_hasta, $this->emergencia, $this->comp_serv, $this->pago_credito, $grupos, $this->seg_sppat);
+//                $res['E_SUCRE'] = $this->rep_integ_mensual->get_tot_grupo_servicio_planilla($fecha_desde, $fecha_hasta, $this->cod_paciente_civil, $this->estado_planilla, $grupos, $this->seg_sucre, $this->emergencia);
+//                $res['E_ISSFA'] = $this->rep_integ_mensual->get_tot_grupo_servicio_planilla($fecha_desde, $fecha_hasta, $this->cod_paciente_civil, $this->estado_planilla, $grupos, $this->seg_issfa, $this->emergencia);
+//                $res['E_IESS'] = $this->rep_integ_mensual->get_tot_grupo_servicio_planilla($fecha_desde, $fecha_hasta, $this->cod_paciente_civil, $this->estado_planilla, $grupos, $this->seg_iess, $this->emergencia);
+//                $res['E_CAMPESINO'] = $this->rep_integ_mensual->get_tot_grupo_servicio_planilla($fecha_desde, $fecha_hasta, $this->cod_paciente_civil, $this->estado_planilla, $grupos, $this->seg_campesino, $this->emergencia);
+//                $res['E_MSP'] = $this->rep_integ_mensual->get_tot_grupo_servicio_planilla($fecha_desde, $fecha_hasta, $this->cod_paciente_civil, $this->estado_planilla, $grupos, $this->seg_msp, $this->emergencia);
+//                $res['E_SPPAT'] = $this->rep_integ_mensual->get_tot_grupo_servicio_planilla($fecha_desde, $fecha_hasta, $this->cod_paciente_civil, $this->estado_planilla, $grupos, $this->seg_sppat, $this->emergencia);
 
                 $this->load->view('tesoreria/result_rep_integrado_ing', $res);
             }

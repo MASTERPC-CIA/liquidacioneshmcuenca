@@ -56,7 +56,7 @@ class rep_estudio_antig {
 
     public function get_val_comprob_serv_por_cliente($fecha_desde, $fecha_hasta, $id_aseg) {
 
-        $fields = 'fv.codigofactventa, CONCAT_WS(" ",nombres," ",apellidos) nombres, fv.totalCompra';
+        $fields = 'fv.codigofactventa, CONCAT_WS(" ",nombres," ",apellidos) nombres, PersonaComercio_cedulaRuc ci,fv.totalCompra';
         $where_data = array('fv.tipo_pago' => $this->pago_credito, 'fv.servicio_hmc' => $this->consulta_ext,
             'fv.fechaarchivada >= ' => $fecha_desde, 'fv.fechaarchivada <= ' => $fecha_hasta, 'fv.estado' => 2,
             'fv.puntoventaempleado_tiposcomprobante_cod' => $this->comp_serv_cxc, 'bc.aseguradora_id' => $id_aseg);

@@ -25,18 +25,35 @@ echo Open('table', array('border'=>'1', 'style'=>'width:100%'));
 
     echo Close('tr');
     if($campo_tipo['lista_clientes']){
-        foreach ($campo_tipo['lista_clientes'][0] as $value){
-        echo Open('tr', array('align'=>'right'));
-            echo tagcontent('td', '', array('align'=>'left'));
-            echo tagcontent('td', $value->ci);
-            echo tagcontent('td', $value->nombres);
-            echo tagcontent('td', '');
-            echo tagcontent('td', number_format($value->pla_valor_aseguradora, get_settings('NUM_DECIMALES'), '.', ','));
-            echo tagcontent('td', number_format(0 , get_settings('NUM_DECIMALES'), '.', ','));
-            echo tagcontent('td', number_format($value->pla_valor_aseguradora, get_settings('NUM_DECIMALES'), '.', ','));
-            echo tagcontent('td', '');
-        echo Close('tr');
-    }
+        if($campo_tipo['lista_clientes'][0]){
+            foreach ($campo_tipo['lista_clientes'][0] as $value){
+                echo Open('tr', array('align'=>'right'));
+                    echo tagcontent('td', '', array('align'=>'left'));
+                    echo tagcontent('td', $value->ci);
+                    echo tagcontent('td', $value->nombres);
+                    echo tagcontent('td', '');
+                    echo tagcontent('td', number_format($value->pla_valor_aseguradora, get_settings('NUM_DECIMALES'), '.', ','));
+                    echo tagcontent('td', number_format(0 , get_settings('NUM_DECIMALES'), '.', ','));
+                    echo tagcontent('td', number_format($value->pla_valor_aseguradora, get_settings('NUM_DECIMALES'), '.', ','));
+                    echo tagcontent('td', '');
+                echo Close('tr');
+            }
+        }
+        if($campo_tipo['lista_clientes'][1]){
+            foreach ($campo_tipo['lista_clientes'][1] as $value){
+                echo Open('tr', array('align'=>'right'));
+                    echo tagcontent('td', '', array('align'=>'left'));
+                    echo tagcontent('td', $value->ci);
+                    echo tagcontent('td', $value->nombres);
+                    echo tagcontent('td', '');
+                    echo tagcontent('td', number_format($value->totalCompra, get_settings('NUM_DECIMALES'), '.', ','));
+                    echo tagcontent('td', number_format(0 , get_settings('NUM_DECIMALES'), '.', ','));
+                    echo tagcontent('td', number_format($value->totalCompra, get_settings('NUM_DECIMALES'), '.', ','));
+                    echo tagcontent('td', '');
+                echo Close('tr');
+            }
+        }
+   
     echo Open('tr', array('align'=>'right', 'style'=>'font-weight:900'));
 
         echo tagcontent('td', '<b>TOTAL</b>', array('colspan'=>'4'));
