@@ -61,7 +61,7 @@ class Liquidacion_general extends MX_Controller {
             if ($fecha_desde <= $fecha_hasta) {
                 if ($id_grupo != -1) {
                     $nombreS = $this->generic_model->get_val_where('hmc_servicio_grupo_bodega', array('dep_gp_id_grupo' => $id_grupo), 'dep_gp_descripcion');
-                    $res['ing_facturas'] = $this->get_ing_fact_por_grupo($fecha_desde, $fecha_hasta, $id_grupo, $this->comp_factura);
+                    $res['ing_facturas'] = $this->get_ing_fact_por_grupo_liq($fecha_desde, $fecha_hasta, $id_grupo, $this->comp_factura);
                     $res['ing_planillas'] = $this->get_ing_pla_por_grupo($fecha_desde, $fecha_hasta, $id_grupo, $this->comp_egreso_Serv);
                     if ($id_grupo == $this->grupo_imagen) {
                         $porcent = get_settings('PORC_MED_RADIOLOGOS');
@@ -101,7 +101,7 @@ class Liquidacion_general extends MX_Controller {
                     }
 
                     $res['nombreS'] = $this->generic_model->get_val_where('hmc_servicio_grupo_bodega', array('dep_gp_id_grupo' => $id_grupo), 'dep_gp_descripcion');
-                    $res['clientes_fact'] = $this->get_clientes_estudio_serv_fact($fecha_desde, $fecha_hasta, $id_grupo);
+                    $res['clientes_fact'] = $this->get_clientes_estudio_serv_fact_liqui($fecha_desde, $fecha_hasta, $id_grupo);
                     $res['clientes_plan'] = $this->get_clientes_estudio_serv_pla($fecha_desde, $fecha_hasta, $id_grupo);
                     $this->load->view('liq_general_views/result_honor_medicos', $res);
                 } else {
@@ -311,5 +311,91 @@ class Liquidacion_general extends MX_Controller {
         $total_egresos = $tot_fact + $tot_plan;
         return $total_egresos;
     }
+    //Funciones utiles para obtener la liquidacion por servicios 
+    public function get_ing_fact_por_grupo_liq($fecha_desde, $fecha_hasta, $id_grupo, $tipo_comp) {
+        $servicios = $this->get_servicios_por_factura_liq($fecha_desde, $fecha_hasta, $id_grupo, $tipo_comp);
+        $list_val = array();
+        $tot_val_fact = 0;
+        if ($servicios) {
+            $cont = 0;
+            foreach ($servicios as $key => $serv) {
+                $tipos_cliente = $this->get_tipos_cliente_por_servicio_liq($fecha_desde, $fecha_hasta, $id_grupo, $serv->id_serv, $tipo_comp);
+                if ($tipos_cliente) {
+                    foreach ($tipos_cliente as $key => $tipoC) {
+                        $tot_prod = $this->get_tot_prod_por_serv_y_tipo_liq($fecha_desde, $fecha_hasta, $id_grupo, $serv->id_serv, $tipoC->id_cliente_tipo, $tipo_comp);
+                        $descripcion = $tipoC->tipo_cliente . ' ' . $serv->tipo_serv;
+                        $list_val[$cont] = (Object) array('descrip_ing' => $descripcion, 'valor_ing' => $tot_prod[0]->val_total);
+                        $tot_val_fact +=$tot_prod[0]->val_total;
+                        $cont++;
+                    }
+                }
+            }
+        }
+        $send['list_ingresos'] = $list_val;
+        $send['tot_val'] = $tot_val_fact;
+        return $send;
+    }
 
+    public function get_servicios_por_factura_liq($fecha_desde, $fecha_hasta, $id_grupo, $tipo_comp) {
+        $fields = 'DISTINCT(bst.id) id_serv, bst.tipo tipo_serv';
+        $where_data = array('fv.tipo_pago' => '1', 'fv.puntoventaempleado_tiposcomprobante_cod' => $tipo_comp,
+            'fv.fechaarchivada >= ' => $fecha_desde, 'fv.fechaarchivada <= ' => $fecha_hasta, 'fv.estado' => 2,
+            'p.productogrupo_codigo' => $id_grupo, 'fv.servicio_hmc <= ' => 1, 'bc.clientetipo_idclientetipo'=>14, 
+            );
+        $join_cluase = array(
+            '0' => array('table' => 'bill_sttiposervicio bst', 'condition' => 'bst.id=fv.servicio_hmc'),
+            '1' => array('table' => 'billing_facturaventadetalle fvd', 'condition' => 'fvd.facturaventa_codigofactventa=fv.codigofactventa'),
+            '2' => array('table' => 'billing_producto p', 'condition' => 'p.codigo=fvd.Producto_codigo'),
+            '3' => array('table' => 'billing_cliente bc', 'condition' => 'bc.PersonaComercio_cedulaRuc=fv.cliente_cedulaRuc'),
+        );
+
+        $servicios = $this->generic_model->get_join('billing_facturaventa fv', $where_data, $join_cluase, $fields);
+        return $servicios;
+    }
+    public function get_tipos_cliente_por_servicio_liq($fecha_desde, $fecha_hasta, $id_grupo, $id_servicio, $tipo_comp) {
+        $fields = 'DISTINCT(bct.idclientetipo) id_cliente_tipo, bct.tipo tipo_cliente';
+        $where_data = array('fv.tipo_pago' => '1', 'fv.puntoventaempleado_tiposcomprobante_cod' => $tipo_comp,
+            'fv.fechaarchivada >= ' => $fecha_desde, 'fv.fechaarchivada <= ' => $fecha_hasta, 'fv.estado' => 2,
+            'p.productogrupo_codigo' => $id_grupo, 'fv.servicio_hmc' => $id_servicio, 'bc.clientetipo_idclientetipo'=>14
+        );
+        $join_cluase = array(
+            '0' => array('table' => 'billing_cliente bc', 'condition' => 'bc.PersonaComercio_cedulaRuc=fv.cliente_cedulaRuc'),
+            '1' => array('table' => 'billing_clientetipo bct', 'condition' => 'bct.idclientetipo=bc.clientetipo_idclientetipo'),
+            '2' => array('table' => 'billing_facturaventadetalle fvd', 'condition' => 'fvd.facturaventa_codigofactventa=fv.codigofactventa'),
+            '3' => array('table' => 'billing_producto p', 'condition' => 'p.codigo=fvd.Producto_codigo'),
+        );
+
+        $tipos_client = $this->generic_model->get_join('billing_facturaventa fv', $where_data, $join_cluase, $fields);
+        return $tipos_client;
+    }
+      public function get_tot_prod_por_serv_y_tipo_liq($fecha_desde, $fecha_hasta, $id_grupo, $id_servicio, $id_tipo, $tipo_comp) {
+        $fields = 'sum(fvd.itemxcantidadprecioiva) val_total';
+        $where_data = array('fv.tipo_pago' => '1', 'fv.puntoventaempleado_tiposcomprobante_cod' => $tipo_comp,
+            'fv.fechaarchivada >= ' => $fecha_desde, 'fv.fechaarchivada <= ' => $fecha_hasta, 'fv.estado' => 2,
+            'p.productogrupo_codigo' => $id_grupo, 'fv.servicio_hmc' => $id_servicio, 'bc.clientetipo_idclientetipo' => $id_tipo
+        );
+        $join_cluase = array(
+            '0' => array('table' => 'billing_cliente bc', 'condition' => 'bc.PersonaComercio_cedulaRuc=fv.cliente_cedulaRuc'),
+            '1' => array('table' => 'billing_facturaventadetalle fvd', 'condition' => 'fvd.facturaventa_codigofactventa=fv.codigofactventa'),
+            '2' => array('table' => 'billing_producto p', 'condition' => 'p.codigo=fvd.Producto_codigo'),
+        );
+        $tot_prod = $this->generic_model->get_join('billing_facturaventa fv', $where_data, $join_cluase, $fields);
+        return $tot_prod;
+    }
+    
+    public function get_clientes_estudio_serv_fact_liqui($fecha_desde, $fecha_hasta, $id_grupo) {
+        $fields = 'fv.fechaarchivada, concat(bc.nombres, bc.apellidos) nombres, bst.tipo, bct.abreviatura, p.nombreUnico, fvd.itemxcantidadprecioiva valor';
+
+        $where_data = array('fv.fechaarchivada >= ' => $fecha_desde, 'fv.fechaarchivada <= ' => $fecha_hasta, 'fv.estado' => 2,
+            'fv.puntoventaempleado_tiposcomprobante_cod' => '01', 'p.productogrupo_codigo' => $id_grupo, 'fv.servicio_hmc <= ' => 1, 'bc.clientetipo_idclientetipo'=>14);
+        $join_cluase = array(
+            '0' => array('table' => 'billing_cliente bc', 'condition' => 'bc.PersonaComercio_cedulaRuc=fv.cliente_cedulaRuc'),
+            '1' => array('table' => 'billing_facturaventadetalle fvd', 'condition' => 'fvd.facturaventa_codigofactventa=fv.codigofactventa'),
+            '2' => array('table' => 'billing_producto p', 'condition' => 'p.codigo=fvd.Producto_codigo'),
+            '3' => array('table' => 'billing_clientetipo bct', 'condition' => 'bct.idclientetipo=bc.clientetipo_idclientetipo'),
+            '4' => array('table' => 'bill_sttiposervicio bst', 'condition' => 'bst.id=fv.servicio_hmc'),
+        );
+        $productos = $this->generic_model->get_join('billing_facturaventa fv', $where_data, $join_cluase, $fields);
+        return $productos;
+    }
 }
