@@ -22,18 +22,19 @@ class rep_estudio_antig {
         $clientes_plan = $this->get_val_planillas_por_cliente($fecha_desde, $fecha_hasta, $estado, $tipo_paciente, $id_aseg);
         $clientes_comp = $this->get_val_comprob_serv_por_cliente($fecha_desde, $fecha_hasta, $id_aseg);
         $val_aseg_cred = 0;
-        $send['lista_clientes'] = array();
+        $send['lista_clientes_plan'] = array();
+        $send['lista_clientes_comp'] = array();
         if ($clientes_plan) {
             foreach ($clientes_plan as $value) {
                 $val_aseg_cred+=$value->pla_valor_aseguradora;
             }
-            array_push($send['lista_clientes'], $clientes_plan);
+            array_push($send['lista_clientes_plan'], $clientes_plan);
         }
         if ($clientes_comp) {
             foreach ($clientes_comp as $value) {
                 $val_aseg_cred+=$value->totalCompra;
             }
-            array_push($send['lista_clientes'], $clientes_comp);
+            array_push($send['lista_clientes_comp'], $clientes_comp);
         }
 
         $send['total_aseg'] = $val_aseg_cred;
