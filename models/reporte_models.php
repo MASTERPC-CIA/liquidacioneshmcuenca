@@ -110,8 +110,8 @@ class Reporte_models extends CI_Model {
         $where_data2['emp.tipo_medic ='] = 'M-A-001';
 
         if (!empty($fecha_desde) && !empty($fecha_hasta)) {
-            $where_data2['ha.fecha_registro >= '] = $fecha_desde;
-            $where_data2['ha.fecha_registro <= '] = $fecha_hasta;
+            $where_data2['po.pt_ope_fecha >= '] = $fecha_desde;
+            $where_data2['po.pt_ope_fecha <= '] = $fecha_hasta;
         }
         $join_clause2[] = array('table' => 'billing_cliente cli', 'condition' => 'po.pt_ope_idCliente = cli.id');
         $join_clause2[] = array('table' => 'hmc_parte_det_producto pdp', 'condition' => 'po.pt_ope_id = pdp.parte_prod_id_parte');
