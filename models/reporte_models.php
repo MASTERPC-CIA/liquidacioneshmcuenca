@@ -128,8 +128,8 @@ class Reporte_models extends CI_Model {
         $fields2 = 'emp.PersonaComercio_cedulaRuc,emp.nombres nom,emp.apellidos ape,emp.cargosempleado_id,ce.nombreCargo especialidad,'
                 . 'emp1.PersonaComercio_cedulaRuc ced1, emp1.nombres nom1, emp1.apellidos ape1, emp1.cargosempleado_id ce1 ,ce1.nombreCargo especialidad1,'
                 . 'emp2.PersonaComercio_cedulaRuc ced2, emp2.nombres nom2, emp2.apellidos ape2, emp2.cargosempleado_id ce2 ,ce2.nombreCargo especialidad2,'
-                . 'emp3.PersonaComercio_cedulaRuc ced3, emp3.nombres nom3, emp3.apellidos ape3, emp3.cargosempleado_id ce3 ,'
-                . 'ce3.nombreCargo especialidad3,CASE cli.clientetipo_idclientetipo WHEN 3 THEN p.costopromediokardex *2 WHEN 4 THEN p.costopromediokardex *2 ELSE p.costopromediokardex END as total,cli.PersonaComercio_cedulaRuc cedula_cli,cli.nombres nom_cli,cli.apellidos ape_cli';
+                . 'emp3.PersonaComercio_cedulaRuc ced3, emp3.nombres nom3, emp3.apellidos ape3, emp3.cargosempleado_id ce3 ,ce3.nombreCargo especialidad3,'
+                . 'CASE cli.clientetipo_idclientetipo WHEN 3 THEN p.costopromediokardex *2 WHEN 4 THEN p.costopromediokardex *2 ELSE p.costopromediokardex END as total,cli.PersonaComercio_cedulaRuc cedula_cli,cli.nombres nom_cli,cli.apellidos ape_cli';
 
         $json_res2 = $this->generic_model->get_join('hmc_parte_operatorio po', $where_data2, $join_clause2, $fields2, '', '', '');
         $res['data1'] = $json_res2;
