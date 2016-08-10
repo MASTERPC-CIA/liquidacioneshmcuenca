@@ -54,8 +54,11 @@
                     <i class="fa fa-dashboard "></i> <span>Honorarios medicos</span> <i class="fa fa-angle-left pull-right"></i>
                 </a>
                 <ul class="treeview-menu">
-                    <li><a href="#/honorario_med"><i class="fa fa-dashboard"></i>Reporte</a></li>
-                    <!--<li><a href="#/desg_ing_diario"><i class="fa fa-dashboard"></i>Desglose de Ingresos Diarios</a></li>-->
+                    <li><a href="#/hm_consulta"><i class="fa fa-dashboard"></i>Consulta Externa</a></li>
+                    <li><a href="#/hm_servicio"><i class="fa fa-dashboard"></i>Servicio</a></li>
+                    <li><a href="#/hm_proced"><i class="fa fa-dashboard"></i>Procedimientos diagnostico</a></li>
+                    <li><a href="#/hm_h_alta"><i class="fa fa-dashboard"></i>Hoja de alta</a></li>
+                    <li><a href="#/hm_quirof"><i class="fa fa-dashboard"></i>Quirofano</a></li>
                 </ul>
             </li>
             <li class="treeview">
