@@ -143,8 +143,8 @@ class Index extends MX_Controller {
         $send['tot_devol'] = $tot_devol * -1; //Se multiplica por -1 para que cambie el signo 
         $send['tot_ventas'] = $tot_ventas * -1;
         $send['tot_pvp'] = $tot_pvp * -1;
-        $send['nombre_grupo'] = $this->generic_model->get('billing_productogrupo', array('codigo' => $data->grupo_farm), 'nombre')[0];
-        $send['nombre_bodega'] = $this->generic_model->get('billing_bodega', array('id' => $data->bodega), 'nombre')[0];
+        $send['nombre_grupo'] = $this->generic_model->get('billing_productogrupo', array('codigo' => $data->grupo_farm), 'nombre', null, 1);
+        $send['nombre_bodega'] = $this->generic_model->get('billing_bodega', array('id' => $data->bodega), 'nombre', null, 1);
         echo json_encode($send);
     }
 

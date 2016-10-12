@@ -47,7 +47,7 @@ echo Open('div',array('class'=>'col-md-12','id'=>'consulta_ing_devoluc','style'=
             echo Close('tr');
         }
         echo Open('tr');
-            echo Open('td',array('colspan'=>3,'align'=>'right'));
+            echo Open('td',array('colspan'=>2,'align'=>'right'));
                 echo '<b>TOTAL</b>';
             echo Close('td');
             echo tagcontent('td', number_format($devoluciones['suma2']->subtotal, 2, ',',''), array('align'=>'right'));
@@ -56,7 +56,7 @@ echo Open('div',array('class'=>'col-md-12','id'=>'consulta_ing_devoluc','style'=
         echo Close('tr');
     echo Close('table'); 
     echo Linebreak(1); 
-    echo tagcontent('div','<b>TOTAL SALDO A FAVOR: </b>'. $saldo_favor, array('style'=>'text-align:left') );
+    echo tagcontent('h4','TOTAL SALDO A FAVOR: '. $saldo_favor, array('style'=>'text-align:right') );
     $this->load->view('footer_liq_farmacia');
 echo Close('div');
 

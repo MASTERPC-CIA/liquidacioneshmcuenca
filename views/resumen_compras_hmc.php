@@ -27,12 +27,13 @@ echo Open('div',array('class'=>'col-md-12','id'=>'consulta','style'=>  'font-siz
             }
             echo Open('tr',array('style'=>'background-color:adadff'));
 
-                echo tagcontent('td','<strong>Totales $ :</strong>',array('colspan'=>3,'style'=>'text-align:center;'));
+                echo tagcontent('td','<strong>Totales $ :</strong>',array('colspan'=>2,'style'=>'text-align:center;'));
                 
                 echo tagcontent('td','<strong>'.$sum_ivadoce.'</strong>',array('style'=>'text-align:right;'));
                 echo tagcontent('td','<strong>'.$sum_ivacero.'</strong>',array('style'=>'text-align:right;'));
                 echo tagcontent('td','<strong>'.$sum_iva.'</strong>',array('style'=>'text-align:right;'));
                 echo tagcontent('td','<strong>'.$sum_total.'</strong>',array('style'=>'text-align:right;'));
+                echo tagcontent('td','',array('style'=>'text-align:right;'));
             echo Close('tr');
         echo Close('table');
    

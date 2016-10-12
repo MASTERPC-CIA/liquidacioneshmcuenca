@@ -63,16 +63,18 @@ class Ingresos_devoluc extends MX_Controller {
 
                     $where_data['aj.fecha >='] = $fecha_ini;
                     $where_data['aj.fecha <='] = $fecha_fin;
+                    $where_data['aj.fecha <>'] = '2016-09-06';
                     $where_data['aj.bodega_id'] = $bodega_id;
-                    $where_data['aj.estado'] = 2;
+                    $where_data['aj.estado'] = 1;//Para los ajustes de salida
                     
                     $send['devoluciones'] = $this->get_devoluciones($where_data);
 
-                    $where_data['aj.tipo'] = 2; //Cuando se trata de una ajuste de entrada, que no se carga incialmente
+//                    $where_data['aj.tipo'] = 2; //Cuando se trata de una ajuste de entrada, que no se carga inicialmente
+                    $where_data['aj.estado'] = 2;//Para los ajustes de entrada
                     $send['ingresos'] = $this->get_ingresos($where_data);
 
                     if ($send['ingresos']['suma']->total != null && $send['devoluciones']['suma2']->total != null) {
-                        $send['saldo_favor'] = $send['ingresos']['suma']->total + $send['devoluciones']['suma2']->total;
+                        $send['saldo_favor'] = $send['ingresos']['suma']->total - $send['devoluciones']['suma2']->total;
                     } else {
                         $send['saldo_favor'] = 0;
                     }
@@ -82,7 +84,7 @@ class Ingresos_devoluc extends MX_Controller {
                     $send['nombre_bodega'] = $this->generic_model->get_val_where('billing_bodega', array('id' => $bodega_id), 'nombre', null, -1);
 
                     $this->load->model('common/empleadocapacidad_model');
-                    $send['auxiliar_cont'] = $this->empleadocapacidad_model->get('aux_contabilidad');
+                    $send['auxiliar_cont'] = $this->empleadocapacidad_model->get('aux_contab_farmacia');
                     $this->load->view('ingresos_devoluciones_hmc', $send);
                 } else {
                     echo info_msg('Debe seleccionar una bodega.', '18px');

@@ -65,7 +65,7 @@ class Compras extends MX_Controller {
 //            $compra['jefe_financiero'] = $this->empleadocapacidad_model->get('jefe_financiero');
 //            $compra['jefe_logistica'] = $this->empleadocapacidad_model->get('jefe_logistica');
 //            $compra['director'] = $this->empleadocapacidad_model->get('director');
-            $compra['auxiliar_cont'] = $this->empleadocapacidad_model->get('aux_contabilidad');
+            $compra['auxiliar_cont'] = $this->empleadocapacidad_model->get('aux_contab_farmacia');
             $this->load->view('resumen_compras_hmc', $compra);
         } else {
             echo info_msg('Debe seleccionar un rango de fechas para buscar!!!');
