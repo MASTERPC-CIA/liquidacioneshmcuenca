@@ -8,7 +8,7 @@
 class Facturas_hospit_hmc extends MX_Controller {
 
     public function load_facturas_hospit() {
-        $data['bodega'] = $this->generic_model->get_data('billing_bodega', array('deleted' => 0, 'vistaweb'=>1), 'id,nombre');
+        $data['bodega'] = $this->generic_model->get_data('billing_bodega', array('deleted' => 0, 'vistaweb' => 1), 'id,nombre');
         $this->load->view('search_fact_hospit_hmc', $data);
     }
 
@@ -20,11 +20,12 @@ class Facturas_hospit_hmc extends MX_Controller {
         if (!empty($fecha_ini) && !empty($fecha_fin)) {
             if ($fecha_ini <= $fecha_fin) {
                 if ($bodega_id != -1) {
+                    $res['nombre_bodega'] = $this->generic_model->get_val('billing_bodega', $bodega_id, 'nombre');
                     $res['lista_tipos'] = $this->get_egresos_farm_por_planilla($fecha_ini, $fecha_fin);
                     $res['fecha_desde'] = $fecha_ini;
                     $res['fecha_hasta'] = $fecha_fin;
                     $this->load->model('common/empleadocapacidad_model');
-                    $res['auxiliar_cont'] = $this->empleadocapacidad_model->get('aux_contabilidad');
+                    $res['auxiliar_cont'] = $this->empleadocapacidad_model->get('aux_contab_farmacia');
                     $this->load->view('result_fact_hospit_hmc', $res);
                 } else {
                     echo info_msg('Debe seleccionar una bodega para buscar!!!');
@@ -83,9 +84,10 @@ class Facturas_hospit_hmc extends MX_Controller {
         $tot_tipo_iva_0 = 0;
         $tot_tipo_otro_iva = 0;
         $tot_tipo_iva = 0;
+        $list = array();
         if ($tipos_cliente) {
             $cont_tipos = 0;
-            $list = array();
+
             foreach ($tipos_cliente as $index2 => $tipo_cliente) {
                 $productos = $this->get_prod_por_tipo_paciente($fecha_desde, $fecha_hasta, $tipo_cliente->id_tipo_cliente);
                 if ($productos) {

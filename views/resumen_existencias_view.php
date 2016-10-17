@@ -21,19 +21,19 @@ echo Open('div',array('class'=>'col-md-12','id'=>'consulta','style'=>  'font-siz
             
                 foreach ($list as $data){
 
-                    $comp_ext_ant = $data->grupo->tot_exist_anterior + $data->grupo->tot_comp_sin_iva;
+                    $comp_ext_ant = $data->grupo->tot_exist_anterior + $data->grupo->tot_comp_sin_iva+$data->grupo->tot_comp_con_iva;
                     echo Open('tr',array('style'=>'background-color:adadff'));
 
                         echo tagcontent('td',$cont);
                         echo tagcontent('td',$data->grupo->nombre);
-                        echo tagcontent('td',$data->grupo->tot_exist_anterior,array('style'=>'text-align:right;'));
-                        echo tagcontent('td',$data->grupo->tot_comp_sin_iva,array('style'=>'text-align:right;'));
-                        echo tagcontent('td',$data->grupo->tot_comp_con_iva,array('style'=>'text-align:right;'));
-                        echo tagcontent('td',$comp_ext_ant,array('style'=>'text-align:right;'));
-                        echo tagcontent('td',$data->grupo->tot_vent_sin_iva,array('style'=>'text-align:right;'));
-                        echo tagcontent('td',$data->grupo->tot_vent_con_iva,array('style'=>'text-align:right;'));
-                        echo tagcontent('td',$data->grupo->tot_vent_utilidad,array('style'=>'text-align:right;'));
-                        echo tagcontent('td',$data->grupo->tot_exist_actual,array('style'=>'text-align:right;'));
+                        echo tagcontent('td',number_format($data->grupo->tot_exist_anterior, 4, '.', ''),array('style'=>'text-align:right;'));
+                        echo tagcontent('td',number_format($data->grupo->tot_comp_sin_iva, 4, '.', ''),array('style'=>'text-align:right;'));
+                        echo tagcontent('td',number_format($data->grupo->tot_comp_con_iva, 4, '.', ''),array('style'=>'text-align:right;'));
+                        echo tagcontent('td',number_format($comp_ext_ant, 4, '.', ''),array('style'=>'text-align:right;'));
+                        echo tagcontent('td',number_format($data->grupo->tot_vent_sin_iva, 4, '.', ''),array('style'=>'text-align:right;'));
+                        echo tagcontent('td',number_format($data->grupo->tot_vent_con_iva, 4, '.', ''),array('style'=>'text-align:right;'));
+                        echo tagcontent('td',number_format($data->grupo->tot_vent_utilidad, 4, '.', ''),array('style'=>'text-align:right;'));
+                        echo tagcontent('td',number_format($data->grupo->tot_exist_actual, 4, '.', ''),array('style'=>'text-align:right;'));
                     echo Close('tr');
                     $cont++;
                     $sum_comp_ext+=$comp_ext_ant;
@@ -42,14 +42,14 @@ echo Open('div',array('class'=>'col-md-12','id'=>'consulta','style'=>  'font-siz
                 }
                 echo Open('tr',array('style'=>'background-color:adadff'));
                     echo tagcontent('td','<strong>SUBTOTALES $ :</strong>',array('colspan'=>2,'style'=>'text-align:left;'));
-                    echo tagcontent('td','<strong>'.$sum_ext_anterior.'</strong>',array('style'=>'text-align:right;'));
-                    echo tagcontent('td','<strong>'.$sum_comp_sin_iva.'</strong>',array('style'=>'text-align:right;'));
-                    echo tagcontent('td','<strong>'.$sum_comp_con_iva.'</strong>',array('style'=>'text-align:right;'));
-                    echo tagcontent('td','<strong>'.$sum_comp_ext.'</strong>',array('style'=>'text-align:right;'));
-                    echo tagcontent('td','<strong>'.$sum_vent_sin_iva.'</strong>',array('style'=>'text-align:right;'));
-                    echo tagcontent('td','<strong>'.$sum_vent_con_iva.'</strong>',array('style'=>'text-align:right;'));
-                    echo tagcontent('td','<strong>'.$sum_vent_utilidad.'</strong>',array('style'=>'text-align:right;'));
-                    echo tagcontent('td','<strong>'.$sum_ext_actual.'</strong>',array('style'=>'text-align:right;'));
+                    echo tagcontent('td','<strong>'.number_format($sum_ext_anterior, 4, '.', '').'</strong>',array('style'=>'text-align:right;'));
+                    echo tagcontent('td','<strong>'.number_format($sum_comp_sin_iva, 4, '.', '').'</strong>',array('style'=>'text-align:right;'));
+                    echo tagcontent('td','<strong>'.number_format($sum_comp_con_iva, 4, '.', '').'</strong>',array('style'=>'text-align:right;'));
+                    echo tagcontent('td','<strong>'.number_format($sum_comp_ext, 4, '.', '').'</strong>',array('style'=>'text-align:right;'));
+                    echo tagcontent('td','<strong>'.number_format($sum_vent_sin_iva, 4, '.', '').'</strong>',array('style'=>'text-align:right;'));
+                    echo tagcontent('td','<strong>'.number_format($sum_vent_con_iva, 4, '.', '').'</strong>',array('style'=>'text-align:right;'));
+                    echo tagcontent('td','<strong>'.number_format($sum_vent_utilidad, 4, '.', '').'</strong>',array('style'=>'text-align:right;'));
+                    echo tagcontent('td','<strong>'.number_format($sum_ext_actual, 4, '.', '').'</strong>',array('style'=>'text-align:right;'));
                 echo Close('tr');
 
                 echo Open('tr');

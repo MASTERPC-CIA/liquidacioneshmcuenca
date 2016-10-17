@@ -14,45 +14,81 @@ class Resumen_comp_vent extends MX_Controller {
 
     public function __construct() {
         parent::__construct();
+        $this->load->library('liq_farmacia');
     }
 
     public function load_resumen_view() {
-        $data['bodega'] = $this->generic_model->get_data('billing_bodega', array('deleted' => 0, 'vistaweb'=>1), 'id,nombre');
+        $data['bodega'] = $this->generic_model->get_data('billing_bodega', array('deleted' => 0, 'vistaweb' => 1), 'id,nombre');
         $this->load->view('search_resumen_exist', $data);
     }
 
-    public function get_compras_por_grupo($desde, $hasta, $bodega_id, $grupo_farm) {
+    public function get_compras_por_grupo_iva_cero($desde, $hasta, $bodega_id, $grupo_farm) {
 
         $join_cluase = array(
             '0' => array('table' => 'billing_facturacompra fc', 'condition' => 'fc.codigoFacturaCompra=dfc.FacturaCompra_codigo'),
             '1' => array('table' => 'billing_producto p ', 'condition' => 'dfc.Producto_codigo=p.codigo and p.productogrupo_codigo = ' . $grupo_farm)
         );
 
-        $where = array('dfc.bodega_id' => $bodega_id, 'fc.fechaCreacion >=' => $desde, 'fc.fechaCreacion <=' => $hasta, 'fc.estado > ' => 0);
-        $fields = 'sum(dfc.itemcostoxcantidadbruto) tot_sin_iva, sum(dfc.totivaval) tot_iva, sum(dfc.itemcostoiva) tot_con_iva';
+        $where = array('dfc.bodega_id' => $bodega_id, 'fc.fechaarchivada >=' => $desde, 'fc.fechaarchivada <=' => $hasta, 'fc.estado' => 2, 'dfc.ivaporcent' => 0);
+        $fields = 'sum(dfc.itemcostoxcantidadbruto) sum_iva_cero, sum(dfc.totivaval) tot_iva_cero, sum(dfc.itemcostoiva) tot_mas_iva_cero';
         $compra = $this->generic_model->get_join('billing_detallefacturacompra dfc', $where, $join_cluase, $fields, 1, null);
-        if (empty($compra->tot_bruto) && empty($compra->tot_neto) && empty($compra->tot_con_iva)) {
-            $compra->tot_sin_iva = 0;
-            $compra->tot_iva = 0;
-            $compra->tot_con_iva = 0;
+        if (empty($compra->sum_iva_cero) && empty($compra->tot_iva_cero) && empty($compra->tot_mas_iva_cero)) {
+            $compra->sum_iva_cero = 0;
+            $compra->tot_iva_cero = 0;
+            $compra->tot_mas_iva_cero = 0;
         }
         return $compra;
     }
 
-    public function get_ventas_por_grupo($desde, $hasta, $bodega_id, $grupo_farm) {
+    public function get_compras_por_grupo_otro_iva($desde, $hasta, $bodega_id, $grupo_farm) {
+        $join_cluase = array(
+            '0' => array('table' => 'billing_facturacompra fc', 'condition' => 'fc.codigoFacturaCompra=dfc.FacturaCompra_codigo'),
+            '1' => array('table' => 'billing_producto p ', 'condition' => 'dfc.Producto_codigo=p.codigo and p.productogrupo_codigo = ' . $grupo_farm)
+        );
+
+        $where = array('dfc.bodega_id' => $bodega_id, 'fc.fechaarchivada >=' => $desde, 'fc.fechaarchivada <=' => $hasta, 'fc.estado' => 2, 'dfc.ivaporcent <>' => 0);
+        $fields = 'sum(dfc.itemcostoxcantidadbruto) sum_otro_iva, sum(dfc.totivaval) tot_otro_iva, sum(dfc.itemcostoiva) tot_mas_otro_iva';
+        $compra = $this->generic_model->get_join('billing_detallefacturacompra dfc', $where, $join_cluase, $fields, 1, null);
+        if (empty($compra->sum_otro_iva) && empty($compra->tot_otro_iva) && empty($compra->tot_mas_otro_iva)) {
+            $compra->sum_otro_iva = 0;
+            $compra->tot_otro_iva = 0;
+            $compra->tot_mas_otro_iva = 0;
+        }
+        return $compra;
+    }
+
+    public function get_ventas_por_grupo_iva_cero($desde, $hasta, $bodega_id, $grupo_farm) {
 
         $join_cluase = array(
             '0' => array('table' => 'billing_facturaventa fv', 'condition' => 'fv.codigofactventa=fvd.facturaventa_codigofactventa'),
             '1' => array('table' => 'billing_producto p ', 'condition' => 'fvd.Producto_codigo=p.codigo and p.productogrupo_codigo = ' . $grupo_farm)
         );
-//        $where = array('fvd.bodega_id' => $bodega_id, 'fv.puntoventaempleado_tiposcomprobante_cod >=' => $this->id_recetario_int, 'fv.puntoventaempleado_tiposcomprobante_cod <=' => $this->id_descargo_mat, 'fv.estado >' => 0, 'fv.fechaCreacion >= ' => $desde, 'fv.fechaCreacion <= ' => $hasta);
-        $where = array('fvd.bodega_id' => $bodega_id, 'fv.fechaCreacion >= ' => $desde, 'fv.fechaCreacion <= ' => $hasta, 'fv.estado =' => 2);
-        $fields = 'sum(fvd.itemprecioxcantidadbruto) tot_bruto, sum(fvd.itemprecioxcantidadneto) tot_neto, sum(fvd.totalpriceiva) tot_con_iva';
+
+        $where = array('fvd.bodega_id' => $bodega_id, 'fv.fechaarchivada >= ' => $desde, 'fv.fechaarchivada <= ' => $hasta, 'fv.estado =' => 2, 'fvd.ivaporcent' => 0);
+        $fields = 'sum(fvd.itempreciobruto*fvd.itemcantidad) val_bruto_iva_cero, sum(fvd.itemprecioxcantidadneto) val_neto_iva_cero';
         $venta = $this->generic_model->get_join('billing_facturaventadetalle fvd', $where, $join_cluase, $fields, 1, null);
-        if (empty($venta->tot_bruto) && empty($venta->tot_neto) && empty($venta->tot_con_iva)) {
-            $venta->tot_bruto = 0;
-            $venta->tot_neto = 0;
-            $venta->tot_con_iva = 0;
+        if (empty($venta->val_bruto_iva_cero) && empty($venta->val_neto_iva_cero)) {
+            $venta->val_bruto_iva_cero = 0;
+            $venta->val_neto_iva_cero = 0;
+        }
+        return $venta;
+    }
+
+    public function get_ventas_por_grupo_otro_iva($desde, $hasta, $bodega_id, $grupo_farm) {
+
+        $join_cluase = array(
+            '0' => array('table' => 'billing_facturaventa fv', 'condition' => 'fv.codigofactventa=fvd.facturaventa_codigofactventa'),
+            '1' => array('table' => 'billing_producto p ', 'condition' => 'fvd.Producto_codigo=p.codigo and p.productogrupo_codigo = ' . $grupo_farm)
+        );
+
+        $where = array('fvd.bodega_id' => $bodega_id, 'fv.fechaCreacion >= ' => $desde, 'fv.fechaCreacion <= ' => $hasta, 'fv.estado =' => 2, 'fvd.ivaporcent <>'=>0);
+        $fields = 'sum(fvd.itempreciobruto*fvd.itemcantidad) val_bruto_otro_iva, sum(fvd.itemprecioxcantidadneto) val_neto_otro_iva, sum(fvd.ivavalitemprecioneto) tot_val_otro_iva, sum(fvd.itemprecioiva) val_inc_otro_iva';
+        $venta = $this->generic_model->get_join('billing_facturaventadetalle fvd', $where, $join_cluase, $fields, 1, null);
+        if (empty($venta->val_bruto_otro_iva) && empty($venta->val_neto_otro_iva) && empty($venta->tot_val_otro_iva) && empty($venta->val_inc_otro_iva)) {
+            $venta->val_bruto_otro_iva = 0;
+            $venta->val_neto_otro_iva = 0;
+            $venta->tot_val_otro_iva = 0;
+            $venta->val_inc_otro_iva = 0;
         }
         return $venta;
     }
@@ -75,23 +111,22 @@ class Resumen_comp_vent extends MX_Controller {
     }
 
     public function get_resumen_grupo($bodega_id, $fecha, $grupo_id) {
-
         $where = array('sb.bodega_id' => $bodega_id);
         $join_cluase = array(
             '0' => array('table' => 'billing_producto p', 'condition' => 'p.codigo=sb.producto_codigo and p.productogrupo_codigo=' . $grupo_id),
             '1' => array('table' => 'billing_productogrupo g', 'condition' => 'g.codigo=p.productogrupo_codigo')
         );
         $productos = $this->generic_model->get_join('billing_stockbodega sb', $where, $join_cluase, $fields = 'DISTINCT(p.codigo) codigo');
-
         $total = 0;
-
-        if (count($productos)) {
+        if ($fecha < '2016-09-06') { /* Se toma como referencia esta fecha porque es la fecha en la que se migro el inventario de farmacia */
+            $fecha = '2016-09-06';
+        }
+        if ($productos) {
             foreach ($productos as $key => $producto) {
-                $where = array('kb.fecha <=' => $fecha, 'kb.bodega_id' => $bodega_id, 'kb.producto_id' => $producto->codigo);
-
+                $where = array('kb.fecha <=' => $fecha, 'kb.bodega_id' => $bodega_id, 'kb.producto_id' => $producto->codigo, 'kb.estado > ' => 0);
                 $fields = '(kb.costo_prom * kb.kardex_total) subtotal';
                 $prod = $this->generic_model->get('bill_kardex kb', $where, $fields, array('kb.id' => 'DESC'), $rows_num = 1);
-                if (count($prod)) {
+                if ($prod) {
                     $total += $prod->subtotal;
                 }
             }
@@ -128,16 +163,28 @@ class Resumen_comp_vent extends MX_Controller {
                     $sum_vent_utilidad = 0;
 
                     foreach ($grupos_farm as $index => $gp) {
+
                         $gp->tot_exist_anterior = $this->get_resumen_grupo($bodega_id, $fecha_ini, $gp->id);
                         $gp->tot_exist_actual = $this->get_resumen_grupo($bodega_id, $fecha_fin, $gp->id);
-                        $data_compras = $this->get_compras_por_grupo($fecha_ini, $fecha_fin, $bodega_id, $gp->id);
-                        $data_ventas = $this->get_ventas_por_grupo($fecha_ini, $fecha_fin, $bodega_id, $gp->id);
-                        $gp->tot_comp_sin_iva = $data_compras->tot_sin_iva;
-//                    $gp->tot_comp_iva = $data_compras->tot_iva;
-                        $gp->tot_comp_con_iva = $data_compras->tot_con_iva;
-                        $gp->tot_vent_sin_iva = $data_ventas->tot_bruto;
-                        $gp->tot_vent_con_iva = $data_ventas->tot_con_iva;
-                        $gp->tot_vent_utilidad = $data_ventas->tot_neto;
+                        
+                        $compras_iva_cero = $this->get_compras_por_grupo_iva_cero($fecha_ini, $fecha_fin, $bodega_id, $gp->id);
+                        $compras_otro_iva = $this->get_compras_por_grupo_otro_iva($fecha_ini, $fecha_fin, $bodega_id, $gp->id);
+                        
+                        $gp->tot_comp_sin_iva = $compras_iva_cero->sum_iva_cero;
+                        $gp->tot_comp_con_iva = $compras_otro_iva->tot_mas_otro_iva;
+
+                        $ventas_iva_cero = $this->get_ventas_por_grupo_iva_cero($fecha_ini, $fecha_fin, $bodega_id, $gp->id);
+                        $ventas_otro_iva = $this->get_ventas_por_grupo_otro_iva($fecha_ini, $fecha_fin, $bodega_id, $gp->id);
+
+                        
+
+                        $gp->tot_vent_sin_iva = $ventas_iva_cero->val_bruto_iva_cero;
+                        $gp->tot_vent_con_iva = $ventas_otro_iva->val_bruto_otro_iva;
+                        
+                        $util_ventas_iva_cero = $ventas_iva_cero->val_neto_iva_cero-$ventas_iva_cero->val_bruto_iva_cero;
+                        $util_ventas_otro_iva = $ventas_otro_iva->val_neto_otro_iva-$ventas_otro_iva->val_bruto_otro_iva;
+                        
+                        $gp->tot_vent_utilidad = $util_ventas_iva_cero+$util_ventas_otro_iva;
 
                         $sum_ext_anterior+=$gp->tot_exist_anterior;
                         $sum_ext_actual+=$gp->tot_exist_actual;
@@ -168,13 +215,13 @@ class Resumen_comp_vent extends MX_Controller {
                     $send['desde'] = $fecha_ini;
                     $send['hasta'] = $fecha_fin;
                     $this->load->model('common/empleadocapacidad_model');
-                    $send['auxiliar_cont'] = $this->empleadocapacidad_model->get('aux_contabilidad');
+                    $send['auxiliar_cont'] = $this->empleadocapacidad_model->get('aux_contab_farmacia');
                     $this->load->view('resumen_existencias_view', $send);
                 } else {
                     echo info_msg('Debe seleccionar una bodega para buscar!!!');
                 }
             } else {
-                echo info_msg('La fecha de incio debe ser menor o igual a la fecha final de busqueda!!!');
+                echo info_msg('La fecha de inicio debe ser menor o igual a la fecha final de busqueda!!!');
             }
         } else {
             echo info_msg('Debe seleccionar un rango de fechas para buscar!!!');
