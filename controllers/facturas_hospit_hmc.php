@@ -16,12 +16,12 @@ class Facturas_hospit_hmc extends MX_Controller {
         $bodega_id = $this->input->post('bodega_id');
         $fecha_ini = $this->input->post('fecha_desde');
         $fecha_fin = $this->input->post('fecha_hasta');
-        $send = null;
+
         if (!empty($fecha_ini) && !empty($fecha_fin)) {
             if ($fecha_ini <= $fecha_fin) {
                 if ($bodega_id != -1) {
                     $res['nombre_bodega'] = $this->generic_model->get_val('billing_bodega', $bodega_id, 'nombre');
-                    $res['lista_tipos'] = $this->get_egresos_farm_por_planilla($fecha_ini, $fecha_fin);
+                    $res['lista_tipos'] = $this->get_egresos_farm_por_planilla($fecha_ini, $fecha_fin, $bodega_id);
                     $res['fecha_desde'] = $fecha_ini;
                     $res['fecha_hasta'] = $fecha_fin;
                     $this->load->model('common/empleadocapacidad_model');
@@ -77,7 +77,8 @@ class Facturas_hospit_hmc extends MX_Controller {
         return $list_grupos;
     }
 
-    public function get_egresos_farm_por_planilla($fecha_desde, $fecha_hasta) {
+    public function get_egresos_farm_por_planilla($fecha_desde, $fecha_hasta, $bodega_id) {
+
         $tipos_cliente = $this->get_tipos_cliente_planillas($fecha_desde, $fecha_hasta);
         $res = array();
         $total_tipo = 0;
@@ -85,16 +86,17 @@ class Facturas_hospit_hmc extends MX_Controller {
         $tot_tipo_otro_iva = 0;
         $tot_tipo_iva = 0;
         $list = array();
+        $cont_tipos = 0;
         if ($tipos_cliente) {
-            $cont_tipos = 0;
-
             foreach ($tipos_cliente as $index2 => $tipo_cliente) {
-                $productos = $this->get_prod_por_tipo_paciente($fecha_desde, $fecha_hasta, $tipo_cliente->id_tipo_cliente);
+                $productos = $this->get_prod_por_tipo_paciente($fecha_desde, $fecha_hasta, $tipo_cliente->id_tipo_cliente, $bodega_id);
+                $total = 0;
+                $iva=0;
+                $sum_valor_prod = 0;
+                $prod_iva_0 = 0;
+                $sum_iva = 0;
+                $prod_otro_iva = 0;
                 if ($productos) {
-                    $sum_valor_prod = 0;
-                    $prod_iva_0 = 0;
-                    $sum_iva = 0;
-                    $prod_otro_iva = 0;
                     foreach ($productos as $value) {
                         if ($value->tarporcent == 0) {
                             $prod_iva_0+=$value->itemprecioxcantidadneto;
@@ -114,18 +116,18 @@ class Facturas_hospit_hmc extends MX_Controller {
                 $tot_tipo_iva_0+=$prod_iva_0;
                 $tot_tipo_otro_iva+=$prod_otro_iva;
             }
-            $res['lista'] = $list;
-            $res['total'] = $total;
-            $res['total_iva_0'] = $tot_tipo_iva_0;
-            $res['total_otro_iva'] = $tot_tipo_otro_iva;
-            $res['total_iva'] = $tot_tipo_iva;
         }
+        $res['lista'] = $list;
+        $res['total'] = $total_tipo;
+        $res['total_iva_0'] = $tot_tipo_iva_0;
+        $res['total_otro_iva'] = $tot_tipo_otro_iva;
+        $res['total_iva'] = $tot_tipo_iva;
         return $res;
     }
 
     public function get_prod_por_tipo_paciente($fecha_desde, $fecha_hasta, $tipo_paciente) {
         $where_data = array('pl.pla_fecha_creacion >= ' => $fecha_desde, 'pl.pla_fecha_creacion <= ' => $fecha_hasta, 'pl.pla_estado' => 3,
-            'bc.clientetipo_idclientetipo' => $tipo_paciente, 'p.productogrupo_codigo >= ' => 344, 'p.productogrupo_codigo <= ' => 347, 'p.productotipo_id' => 1);
+            'bc.clientetipo_idclientetipo' => $tipo_paciente, 'p.productogrupo_codigo >= ' => 303, 'p.productogrupo_codigo <= ' => 306, 'p.productotipo_id' => 1);
         $fields = 'pld.pdet_total itemprecioxcantidadneto, it.tarporcent';
 
         $join_cluase = array(
