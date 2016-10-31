@@ -59,11 +59,15 @@ echo Open('div',array('class'=>'col-md-12','id'=>'consulta','style'=>  'font-siz
     //                echo tagcontent('td','<strong>'.$sum_dep_utilidad.'</strong>',array('style'=>'text-align:right;'));
     //                echo tagcontent('td','');
 
-                    echo tagcontent('td','<strong>VALOR FIJO ENTREGADO A DEPENDENCIAS $ :</strong>',array('colspan'=>6,'style'=>'text-align:left;'));
+                    echo tagcontent('td','<strong>VALOR FIJO ENTREGADO A DEPENDENCIAS $ :</strong>',array('colspan'=>9,'style'=>'text-align:left;'));
                     echo tagcontent('td','<strong>'.get_settings('VALOR_FIJO_DEPENDENCIAS').'</strong>',array('style'=>'text-align:right;'));
-                    echo tagcontent('td','<strong>'.get_settings('VALOR_FIJO_DEPENDENCIAS').'</strong>',array('style'=>'text-align:right;'));
-                    echo tagcontent('td','<strong>'.get_settings('VALOR_FIJO_DEPENDENCIAS').'</strong>',array('style'=>'text-align:right;'));
-                    echo tagcontent('td','');
+//                    echo tagcontent('td','<strong>'.get_settings('VALOR_FIJO_DEPENDENCIAS').'</strong>',array('style'=>'text-align:right;'));
+//                    echo tagcontent('td','<strong>'.get_settings('VALOR_FIJO_DEPENDENCIAS').'</strong>',array('style'=>'text-align:right;'));
+                echo Close('tr');
+                $totales = $sum_ext_actual+get_settings('VALOR_FIJO_DEPENDENCIAS'); //Para presentar los totales de las facturas
+                echo Open('tr');
+                     echo tagcontent('td','<strong>TOTAL:</strong>',array('colspan'=>9,'style'=>'text-align:left;'));
+                    echo tagcontent('td','<strong>'.number_format($totales, 4, '.', '').'</strong>',array('style'=>'text-align:right;'));
                 echo Close('tr');
             echo Close('table');
             }
