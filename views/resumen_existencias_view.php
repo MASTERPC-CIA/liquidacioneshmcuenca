@@ -10,7 +10,7 @@ echo Open('div',array('class'=>'col-md-12','id'=>'consulta','style'=>  'font-siz
     echo '<CENTER><B>PERIODO:</B> '.$desde .' - '.$hasta.'</CENTER><br>';
     
     echo Open('table', array('class' => 'table table-striped table-condensed','border'=>'1','style'=>'font-size:'.get_settings('FONT_SIZE_FACT'),'width'=>'100%'));
-            $thead = array('ORDEN', 'ITEMS', "EXIST. ANTERIOR", 'COMPRAS SIN IVA', 'COMPRAS CON IVA','INGR. SIN IVA', 'INGR. CON IVA','TOT. EXIST INGR.','EGR. SIN IVA', 'EGR. CON IVA','VENTAS SIN IVA', 'VENTAS CON IVA','VENTAS UTIL.','EXIST. ACTUAL');
+            $thead = array('ORDEN', 'ITEMS', "EXIST. ANTERIOR", 'COMPRAS SIN IVA', 'COMPRAS CON IVA','INGR. SIN IVA', 'INGR. CON IVA','TOT. EXIST INGR.','DEV. SIN IVA', 'DEV. CON IVA','VENTAS SIN IVA', 'VENTAS CON IVA','VENTAS UTIL.','EXIST. ACTUAL');
             echo tablethead($thead);
             $sum_comp_ext=0;
             $sum_desc=0; $sum_ivadoce=0; $sum_ivacero=0; $sum_recargo=0; $sum_ice=0; $sum_total = 0 ;$sum_iva=0;
