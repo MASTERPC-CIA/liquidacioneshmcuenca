@@ -81,7 +81,7 @@ class Resumen_comp_vent extends MX_Controller {
             '1' => array('table' => 'billing_producto p ', 'condition' => 'fvd.Producto_codigo=p.codigo and p.productogrupo_codigo = ' . $grupo_farm)
         );
 
-        $where = array('fvd.bodega_id' => $bodega_id, 'fv.fechaCreacion >= ' => $desde, 'fv.fechaCreacion <= ' => $hasta, 'fv.estado =' => 2, 'fvd.ivaporcent <>'=>0);
+        $where = array('fvd.bodega_id' => $bodega_id, 'fv.fechaCreacion >= ' => $desde, 'fv.fechaCreacion <= ' => $hasta, 'fv.estado =' => 2, 'fvd.ivaporcent <>' => 0);
         $fields = 'sum(fvd.itempreciobruto*fvd.itemcantidad) val_bruto_otro_iva, sum(fvd.itemprecioxcantidadneto) val_neto_otro_iva, sum(fvd.ivavalitemprecioneto) tot_val_otro_iva, sum(fvd.itemprecioiva) val_inc_otro_iva';
         $venta = $this->generic_model->get_join('billing_facturaventadetalle fvd', $where, $join_cluase, $fields, 1, null);
         if (empty($venta->val_bruto_otro_iva) && empty($venta->val_neto_otro_iva) && empty($venta->tot_val_otro_iva) && empty($venta->val_inc_otro_iva)) {
@@ -161,30 +161,45 @@ class Resumen_comp_vent extends MX_Controller {
                     $sum_vent_con_iva = 0;
                     $sum_vent_sin_iva = 0;
                     $sum_vent_utilidad = 0;
+                    $sum_ent_iva_cero=0;
+                    $sum_ent_otro_iva=0;
+                    $sum_sal_iva_cero=0;
+                    $sum_sal_otro_iva=0;
+                    
 
                     foreach ($grupos_farm as $index => $gp) {
 
                         $gp->tot_exist_anterior = $this->get_resumen_grupo($bodega_id, $fecha_ini, $gp->id);
                         $gp->tot_exist_actual = $this->get_resumen_grupo($bodega_id, $fecha_fin, $gp->id);
-                        
+
                         $compras_iva_cero = $this->get_compras_por_grupo_iva_cero($fecha_ini, $fecha_fin, $bodega_id, $gp->id);
                         $compras_otro_iva = $this->get_compras_por_grupo_otro_iva($fecha_ini, $fecha_fin, $bodega_id, $gp->id);
-                        
+
                         $gp->tot_comp_sin_iva = $compras_iva_cero->sum_iva_cero;
                         $gp->tot_comp_con_iva = $compras_otro_iva->tot_mas_otro_iva;
+
+                        $ajs_entrada_iva_cero = $this->get_aj_ent_por_grupo_iva_cero($fecha_ini, $fecha_fin, $bodega_id, $gp->id);
+                        $ajs_entrada_otro_iva = $this->get_aj_ent_por_grupo_otro_iva($fecha_ini, $fecha_fin, $bodega_id, $gp->id);
+
+                        $gp->tot_aj_ent_iva_cero = $ajs_entrada_iva_cero->sum_iva_cero;
+                        $gp->tot_aj_ent_otro_iva = $ajs_entrada_otro_iva->sum_otro_iva;
 
                         $ventas_iva_cero = $this->get_ventas_por_grupo_iva_cero($fecha_ini, $fecha_fin, $bodega_id, $gp->id);
                         $ventas_otro_iva = $this->get_ventas_por_grupo_otro_iva($fecha_ini, $fecha_fin, $bodega_id, $gp->id);
 
-                        
-
                         $gp->tot_vent_sin_iva = $ventas_iva_cero->val_bruto_iva_cero;
                         $gp->tot_vent_con_iva = $ventas_otro_iva->val_bruto_otro_iva;
-                        
-                        $util_ventas_iva_cero = $ventas_iva_cero->val_neto_iva_cero-$ventas_iva_cero->val_bruto_iva_cero;
-                        $util_ventas_otro_iva = $ventas_otro_iva->val_neto_otro_iva-$ventas_otro_iva->val_bruto_otro_iva;
-                        
-                        $gp->tot_vent_utilidad = $util_ventas_iva_cero+$util_ventas_otro_iva;
+
+                        $ajs_salida_iva_cero = $this->get_aj_sal_por_grupo_iva_cero($fecha_ini, $fecha_fin, $bodega_id, $gp->id);
+                        $ajs_salida_otro_iva = $this->get_aj_sal_por_grupo_otro_iva($fecha_ini, $fecha_fin, $bodega_id, $gp->id);
+
+                        $gp->tot_aj_sal_iva_cero = $ajs_salida_iva_cero->sum_iva_cero;
+                        $gp->tot_aj_sal_otro_iva = $ajs_salida_otro_iva->sum_otro_iva;
+
+                        $util_ventas_iva_cero = $ventas_iva_cero->val_neto_iva_cero - $ventas_iva_cero->val_bruto_iva_cero;
+                        $util_ventas_otro_iva = $ventas_otro_iva->val_neto_otro_iva - $ventas_otro_iva->val_bruto_otro_iva;
+
+                        $gp->tot_vent_utilidad = $util_ventas_iva_cero + $util_ventas_otro_iva;
 
                         $sum_ext_anterior+=$gp->tot_exist_anterior;
                         $sum_ext_actual+=$gp->tot_exist_actual;
@@ -193,6 +208,10 @@ class Resumen_comp_vent extends MX_Controller {
                         $sum_vent_sin_iva+=$gp->tot_vent_sin_iva;
                         $sum_vent_con_iva+=$gp->tot_vent_con_iva;
                         $sum_vent_utilidad+=$gp->tot_vent_utilidad;
+                        $sum_ent_iva_cero+=$gp->tot_aj_ent_iva_cero;
+                        $sum_ent_otro_iva+=$gp->tot_aj_ent_otro_iva;
+                        $sum_sal_iva_cero += $gp->tot_aj_sal_iva_cero;
+                        $sum_sal_otro_iva += $gp->tot_aj_sal_otro_iva;
 
 
                         $list[$cont] = (Object) array('grupo' => $gp);
@@ -212,6 +231,10 @@ class Resumen_comp_vent extends MX_Controller {
                     $send['sum_dep_sin_iva'] = $data_dep->tot_bruto;
                     $send['sum_dep_con_iva'] = $data_dep->tot_con_iva;
                     $send['sum_dep_utilidad'] = $data_dep->tot_neto;
+                    $send['sum_ent_sin_iva'] = $sum_ent_iva_cero; 
+                    $send['sum_ent_con_iva'] =  $sum_ent_otro_iva;
+                    $send['sum_sal_sin_iva'] =  $sum_sal_iva_cero;
+                    $send['sum_sal_con_iva'] =  $sum_sal_otro_iva;
                     $send['desde'] = $fecha_ini;
                     $send['hasta'] = $fecha_fin;
                     $this->load->model('common/empleadocapacidad_model');
@@ -226,6 +249,86 @@ class Resumen_comp_vent extends MX_Controller {
         } else {
             echo info_msg('Debe seleccionar un rango de fechas para buscar!!!');
         }
+    }
+
+    public function get_aj_ent_por_grupo_iva_cero($desde, $hasta, $bodega_id, $grupo_farm) {
+
+        $join_cluase = array(
+            '0' => array('table' => 'bill_ajustentrada ae', 'condition' => 'ae.id=aed.ajustentrada_id'),
+            '1' => array('table' => 'billing_producto p ', 'condition' => 'aed.Producto_codigo=p.codigo and p.productogrupo_codigo = ' . $grupo_farm),
+            '2' => array('table' => 'bill_productoimpuestotarifa pit', 'condition' => 'p.codigo=pit.producto_id')
+        );
+
+        $where = array('aed.bodega_id' => $bodega_id, 'ae.fecha >=' => $desde, 'ae.fecha <=' => $hasta, 'ae.tipo <>'=>4,'pit.impuestotarifa_id' => 1); //1 corresponde a tarifa 0
+
+        $fields = 'sum(aed.itemcostoxcantidad) sum_iva_cero';
+
+        $ajuste_ent = $this->generic_model->get_join('bill_ajustentradadet aed', $where, $join_cluase, $fields, 1, null);
+
+        if (empty($ajuste_ent->sum_iva_cero)) {
+            $ajuste_ent->sum_iva_cero = 0;
+        }
+        return $ajuste_ent;
+    }
+    
+    public function get_aj_ent_por_grupo_otro_iva($desde, $hasta, $bodega_id, $grupo_farm) {
+
+        $join_cluase = array(
+            '0' => array('table' => 'bill_ajustentrada ae', 'condition' => 'ae.id=aed.ajustentrada_id'),
+            '1' => array('table' => 'billing_producto p ', 'condition' => 'aed.Producto_codigo=p.codigo and p.productogrupo_codigo = ' . $grupo_farm),
+            '2' => array('table' => 'bill_productoimpuestotarifa pit', 'condition' => 'p.codigo=pit.producto_id')
+        );
+
+        $where = array('aed.bodega_id' => $bodega_id, 'ae.fecha >=' => $desde, 'ae.fecha <=' => $hasta, 'ae.tipo <>'=>4,'pit.impuestotarifa_id' => 2); //1 corresponde a tarifa 0
+
+        $fields = 'sum(aed.itemcostoxcantidad) sum_otro_iva';
+
+        $ajuste_ent = $this->generic_model->get_join('bill_ajustentradadet aed', $where, $join_cluase, $fields, 1, null);
+
+        if (empty($ajuste_ent->sum_otro_iva)) {
+            $ajuste_ent->sum_otro_iva = 0;
+        }
+        return $ajuste_ent;
+    }
+    
+    public function get_aj_sal_por_grupo_iva_cero($desde, $hasta, $bodega_id, $grupo_farm) {
+
+        $join_cluase = array(
+            '0' => array('table' => 'bill_ajustesalida ajs', 'condition' => 'ajs.id=ajsd.ajustesalida_id'),
+            '1' => array('table' => 'billing_producto p ', 'condition' => 'ajsd.Producto_codigo=p.codigo and p.productogrupo_codigo = ' . $grupo_farm),
+            '2' => array('table' => 'bill_productoimpuestotarifa pit', 'condition' => 'p.codigo=pit.producto_id')
+        );
+
+        $where = array('ajsd.bodega_id' => $bodega_id, 'ajs.fecha >=' => $desde, 'ajs.fecha <=' => $hasta, 'pit.impuestotarifa_id' => 1); //1 corresponde a tarifa 0
+
+        $fields = 'sum(ajsd.itemcostoxcantidad) sum_iva_cero';
+
+        $ajuste_sal = $this->generic_model->get_join('bill_ajustesalidadet ajsd', $where, $join_cluase, $fields, 1, null);
+
+        if (empty($ajuste_sal->sum_iva_cero)) {
+            $ajuste_sal->sum_iva_cero = 0;
+        }
+        return $ajuste_sal;
+    }
+    
+    public function get_aj_sal_por_grupo_otro_iva($desde, $hasta, $bodega_id, $grupo_farm) {
+
+        $join_cluase = array(
+            '0' => array('table' => 'bill_ajustesalida ajs', 'condition' => 'ajs.id=ajsd.ajustesalida_id'),
+            '1' => array('table' => 'billing_producto p ', 'condition' => 'ajsd.Producto_codigo=p.codigo and p.productogrupo_codigo = ' . $grupo_farm),
+            '2' => array('table' => 'bill_productoimpuestotarifa pit', 'condition' => 'p.codigo=pit.producto_id')
+        );
+
+        $where = array('ajsd.bodega_id' => $bodega_id, 'ajs.fecha >=' => $desde, 'ajs.fecha <=' => $hasta, 'pit.impuestotarifa_id' => 2); //2 corresponde a otro iva 14 o 12
+
+        $fields = 'sum(ajsd.itemcostoxcantidad) sum_otro_iva';
+
+        $ajuste_ent = $this->generic_model->get_join('bill_ajustesalidadet ajsd', $where, $join_cluase, $fields, 1, null);
+
+        if (empty($ajuste_ent->sum_otro_iva)) {
+            $ajuste_ent->sum_otro_iva = 0;
+        }
+        return $ajuste_ent;
     }
 
 }
