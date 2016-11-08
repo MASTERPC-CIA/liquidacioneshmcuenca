@@ -10,11 +10,15 @@ class Index extends MX_Controller {
     protected $cod_aj_salida = '13';
     protected $cod_compras = '02';
     protected $cod_ventas = '01';
+    private $cod_recetario_int = 58; //Codigo del recetario integrado no fact
 
     public function __construct() {
         parent::__construct();
         $this->user->check_session();
         $this->load->library('liq_farmacia');
+        $this->load->library("common/product"); //load library
+        
+        $this->load->model('reporte_models');
     }
 
     public function index() {
@@ -84,7 +88,7 @@ class Index extends MX_Controller {
 
             if ($productos) {
                 foreach ($productos as $key => $producto) {
-                    
+
                     $prod = $this->generic_model->get('billing_producto', array('codigo' => $producto->codigo), 'codigo, nombreUnico,costopromediokardex costo_prom', null, 1);
 
                     $prod_ini = $this->liq_farmacia->get_tot_inv_inicial($data->fecha_ini, $data->bodega, $producto->codigo);
@@ -98,7 +102,7 @@ class Index extends MX_Controller {
                         $prod->tot_inicial = 0;
                     }
                     $tot_inicial+=$prod->tot_inicial;
-                    
+
                     $prod_ing_ent = $this->liq_farmacia->get_tot_aj_entrada($data->fecha_ini, $data->fecha_fin, $data->bodega, $producto->codigo);
                     $prod->cant_aje = $prod_ing_ent[0]->cant_ing_ent;
                     $prod->costo_prom_aje = $prod_ing_ent[0]->costo_ing_ent;
@@ -134,7 +138,7 @@ class Index extends MX_Controller {
                         $prod->tot_final = 0;
                     }
                     $tot_final+=$prod->tot_final;
-                    
+
                     $productos_inv[$key] = (Object) $prod;
                 }
             }
@@ -145,7 +149,7 @@ class Index extends MX_Controller {
         $send['tot_ingresos'] = $tot_ingresos;
         $send['tot_compras'] = $tot_compras;
         $send['tot_devol'] = $tot_devol;
-        $send['tot_ventas'] = $tot_ventas ;
+        $send['tot_ventas'] = $tot_ventas;
 
         $send['nombre_grupo'] = $this->generic_model->get('billing_productogrupo', array('codigo' => $data->grupo_farm), 'nombre', null, 1);
         $send['nombre_bodega'] = $this->generic_model->get('billing_bodega', array('id' => $data->bodega), 'nombre', null, 1);
@@ -281,6 +285,33 @@ class Index extends MX_Controller {
 
         $res = $this->reporte_models->get_turnos($fecha_desde, $fecha_hasta);
         $this->load->view('listado_honorarios_excel', $res);
+    }
+
+    public function search_generar_factura() {
+        $this->load->view('generar_factura_search');
+    }
+
+    public function generar_fac() {
+        $fecha_desde_f = $this->input->post('fecha_desde_f');
+        $fecha_hasta_f = $this->input->post('fecha_hasta_f');
+        $tipo_transaccion = $this->cod_recetario_int;
+        $this->load_pre_factura($tipo_transaccion, $fecha_desde_f, $fecha_hasta_f);
+    }
+
+    public function load_pre_factura($tipo_transaccion, $fecha_desde_f, $fecha_hasta_f) {
+        
+        if (!empty($fecha_desde_f) || !empty($fecha_hasta_f) ) {
+            $venta_det['venta_det'] = $this->reporte_models->get_pre_factura_recetario_int($tipo_transaccion, $fecha_desde_f, $fecha_hasta_f);
+            $venta_det['factura'] = $this->reporte_models->get_facturas($tipo_transaccion, $fecha_desde_f, $fecha_hasta_f);
+ 
+            if (!empty($venta_det['venta_det'])) {
+                 $this->load->view('fact_recetario', $venta_det);
+            } else {
+                echo tagcontent('script', 'alertaError("No existen facturas en esas fechas")');
+            }
+        } else {
+            echo tagcontent('script', 'alertaError("Ingrese fechas")');
+        }
     }
 
 }

@@ -70,7 +70,7 @@
                     <li><a href="#/est_cuentas"><i class="fa fa-dashboard"></i>Rep. Estudio de Antiguedades</a></li>
                 </ul>
             </li>
-
+            <li> <a class="active" href="#/consolidado_noFact"><i class="glyphicon glyphicon-inbox"></i> Consolidado Recetario Integrado no facturado</a> </li>
         </ul>
     </div>
 </div>

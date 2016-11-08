@@ -227,5 +227,36 @@ class Reporte_models extends CI_Model {
 
         return $res;
     }
+    
+    function get_pre_factura_recetario_int($tipo_transaccion, $fecha_desde_f, $fecha_hasta_f) {
+        //$this->db->group_by("Producto_codigo");
+        $this->db->where('fv.estado', 2);
+        $this->db->where('fv.fechaCreacion >=', $fecha_desde_f);
+        $this->db->where('fv.fechaCreacion <=', $fecha_hasta_f);
+        $this->db->where('fv.puntoventaempleado_tiposcomprobante_cod', $tipo_transaccion);/*Se trabaja con 55 para el recetario integrado no facturado*/
+        //$this -> db -> select('fd.id, fd.pdet_cant itemcantidad, fd.pdet_precio_unitario itempreciobruto, fd.pdet_total itemprecioxcantidadbruto, fd.pdet_precio_unitario itemprecioneto, fd.pdet_total itemprecioxcantidadneto,  p.nombreUnico product_name, p.esSuperproducto superProducto, p.codigo product_cod, p.esServicio servicio');
+//        $this->db->select('fd.facturaventa_codigofactventa, fd.itemcantidad itemcantidad, p.nombreUnico product_name, p.esSuperproducto superProducto,p.productogrupo_codigo productogrupo_codigo, p.codigo product_cod,fd.itemprecioxcantidadneto costopromediokardex, p.esServicio servicio,fd.bodega_id');/*Saca mal los valores para la factura final*/
+        $this->db->select('fv.fechaCreacion, fd.facturaventa_codigofactventa, fd.itemcantidad itemcantidad, p.nombreUnico product_name, p.esSuperproducto superProducto,p.productogrupo_codigo productogrupo_codigo, p.codigo product_cod,fd.itemprecioneto costopromediokardex, p.esServicio servicio,fd.bodega_id, fd.itemprecioneto, fd.itemprecioxcantidadneto');
+        $this->db->from('billing_facturaventadetalle fd');
+        //$this -> db -> join('billing_producto p','fd.exa_id_estudio = p.codigo or fd.exa_id_estudio = p.codigo2');
+        $this->db->join('billing_producto p', 'fd.Producto_codigo = p.codigo');
+        $this->db->join('billing_facturaventa fv', 'fd.facturaventa_codigofactventa = fv.codigofactventa');
+        $query = $this->db->get();
+        return $query->result();
+    }
+    function get_facturas($tipo_transaccion, $fecha_desde_f, $fecha_hasta_f) {
+        //$this->db->group_by("Producto_codigo");
+        $this->db->where('fv.estado', 2);
+        $this->db->where('fv.fechaCreacion >=', $fecha_desde_f);
+        $this->db->where('fv.fechaCreacion <=', $fecha_hasta_f);
+        $this->db->where('fv.puntoventaempleado_tiposcomprobante_cod', $tipo_transaccion);/*Se trabaja con 55 para el recetario integrado no facturado*/
+        //$this -> db -> select('fd.id, fd.pdet_cant itemcantidad, fd.pdet_precio_unitario itempreciobruto, fd.pdet_total itemprecioxcantidadbruto, fd.pdet_precio_unitario itemprecioneto, fd.pdet_total itemprecioxcantidadneto,  p.nombreUnico product_name, p.esSuperproducto superProducto, p.codigo product_cod, p.esServicio servicio');
+//        $this->db->select('fd.facturaventa_codigofactventa, fd.itemcantidad itemcantidad, p.nombreUnico product_name, p.esSuperproducto superProducto,p.productogrupo_codigo productogrupo_codigo, p.codigo product_cod,fd.itemprecioxcantidadneto costopromediokardex, p.esServicio servicio,fd.bodega_id');/*Saca mal los valores para la factura final*/
+        $this->db->select('SUM(fv.subtotalBruto) as subtotalBruto,SUM(fv.tarifacerobruto) as tarifacerobruto,SUM(fv.tarifadocebruto) as tarifadocebruto,SUM(fv.subtotalBruto) as subtotalBruto,SUM(fv.recargovalor) as recargovalor,SUM(fv.descuentovalor) as descuentovalor,SUM(fv.subtotalNeto) as subtotalNeto,SUM(fv.iceval) as iceval,SUM(fv.ivaval) as ivaval,SUM(fv.totalCompra) as totalCompra');
+        $this->db->from('billing_facturaventa fv');
+        //$this->db->join('billing_facturaventaOK fv', 'fd.facturaventa_codigofactventa = fv.codigofactventa');
+        $query = $this->db->get();
+        return $query->result();
+    }
 
 }
