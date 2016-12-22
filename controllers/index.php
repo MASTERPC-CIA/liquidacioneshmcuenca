@@ -57,8 +57,12 @@ class Index extends MX_Controller {
 
     //Permite cargar los grupos de prroductos de farmacia
     public function load_grupos_farmacia() {
-        $where = array('codigo >= ' => 303, 'codigo <= ' => 306);
-        $query = $this->generic_model->get('billing_productogrupo', $where, 'codigo, nombre');
+        $where = 'codigo >= 303 and codigo <=306';
+
+        $where .= ' OR (codigo = 311 OR codigo=312)';
+        $where_data = array($where => NULL);
+//        $where = array('codigo >= ' => 303, 'codigo <= ' => 306 ,'codigo'=>311,'codigo'=>312);
+        $query = $this->generic_model->get('billing_productogrupo', $where_data, 'codigo, nombre');
         echo json_encode($query);
     }
 
