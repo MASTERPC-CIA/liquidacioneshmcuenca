@@ -108,7 +108,7 @@ class Liquidacion_general extends MX_Controller {
                     echo info_msg('Debe seleccionar un servicio.', '18px');
                 }
             } else {
-                echo info_msg('la fecha incial debe ser menor a la fecha final de busqueda', '18px');
+                echo info_msg('la fecha inicial debe ser menor a la fecha final de busqueda', '18px');
             }
         } else {
             echo info_msg('Debe seleccionar un rango de fechas para buscar');
@@ -387,7 +387,7 @@ class Liquidacion_general extends MX_Controller {
         $fields = 'fv.fechaarchivada, concat(bc.nombres, bc.apellidos) nombres, bst.tipo, bct.abreviatura, p.nombreUnico, fvd.itemxcantidadprecioiva valor';
 
         $where_data = array('fv.fechaarchivada >= ' => $fecha_desde, 'fv.fechaarchivada <= ' => $fecha_hasta, 'fv.estado' => 2,
-            'fv.puntoventaempleado_tiposcomprobante_cod' => '01', 'p.productogrupo_codigo' => $id_grupo, 'fv.servicio_hmc <= ' => 1, 'bc.clientetipo_idclientetipo'=>14);
+            'fv.puntoventaempleado_tiposcomprobante_cod' => '01', 'p.productogrupo_codigo' => $id_grupo);//, 'fv.servicio_hmc <= ' => 1);//, 'bc.clientetipo_idclientetipo'=>14);
         $join_cluase = array(
             '0' => array('table' => 'billing_cliente bc', 'condition' => 'bc.PersonaComercio_cedulaRuc=fv.cliente_cedulaRuc'),
             '1' => array('table' => 'billing_facturaventadetalle fvd', 'condition' => 'fvd.facturaventa_codigofactventa=fv.codigofactventa'),
