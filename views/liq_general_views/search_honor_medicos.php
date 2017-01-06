@@ -14,6 +14,11 @@ echo lineBreak2(1, array('class'=>'clr'));
     $combo_depart = combobox($servicios_bodega, array('label' => 'dep_gp_descripcion', 'value' => 'dep_gp_id_grupo'), array('class' => 'form-control input-sm', 'name' => 'depart_id'),TRUE);
     echo get_combo_group('Servicio: ', $combo_depart, 'col-md-3 form-group has-warning');
     
+    //Se agrega la opción para poder filtrar por tipo de paciente
+    
+    $combo_tipo_cliente = combobox($tipos_cliente, array('label' => 'tipo', 'value' => 'idclientetipo'), array('class' => 'form-control input-sm', 'name' => 'tipocliente_id'),TRUE);
+    echo get_combo_group('Tipo de paciente: ', $combo_tipo_cliente, 'col-md-3 form-group has-warning');
+    
     echo tagcontent('button', '<span class="glyphicon glyphicon-search"></span> Buscar', array('type'=>'submit','id'=>'ajaxformbtn','data-target'=>'res_honor_medicos_out','class'=>'btn btn-primary btn-sm'));
 echo Close('form');
 
