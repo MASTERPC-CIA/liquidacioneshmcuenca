@@ -43,24 +43,24 @@ echo Open('div',array('class'=>'col-md-12','id'=>'consulta','style'=>'font-size:
                     $cont++;
                 }
             }
-            if($clientes_plan){
-                foreach ($clientes_plan as $value) { //Para los ingresos
-                    $val_estudio_pla = ($value->pdet_total*($porcent/100));
-                    echo Open('tr');
-                        echo tagcontent('td', $cont);
-                        echo tagcontent('td', $value->pla_fecha_creacion);
-                        echo tagcontent('td', $value->nombres);
-                        echo tagcontent('td', $value->tipo);
-                        echo tagcontent('td', $value->abreviatura);
-                        echo tagcontent('td', $value->nombreUnico);
-                        echo tagcontent('td', number_decimal($value->pdet_total), array('align'=>'right'));
-                        echo tagcontent('td', number_decimal($val_estudio_pla), array('align'=>'right'));
-                    echo Close('tr');
-                    $tot_val_serv+=$value->pdet_total;
-                    $total_porcet += $val_estudio_pla;
-                    $cont++;
-                }
-            }
+//            if($clientes_plan){
+//                foreach ($clientes_plan as $value) { //Para los ingresos
+//                    $val_estudio_pla = ($value->pdet_total*($porcent/100));
+//                    echo Open('tr');
+//                        echo tagcontent('td', $cont);
+//                        echo tagcontent('td', $value->pla_fecha_creacion);
+//                        echo tagcontent('td', $value->nombres);
+//                        echo tagcontent('td', $value->tipo);
+//                        echo tagcontent('td', $value->abreviatura);
+//                        echo tagcontent('td', $value->nombreUnico);
+//                        echo tagcontent('td', number_decimal($value->pdet_total), array('align'=>'right'));
+//                        echo tagcontent('td', number_decimal($val_estudio_pla), array('align'=>'right'));
+//                    echo Close('tr');
+//                    $tot_val_serv+=$value->pdet_total;
+//                    $total_porcet += $val_estudio_pla;
+//                    $cont++;
+//                }
+//            }
             echo Open('tr');
                 echo tagcontent('td', '<b>TOTALES:</b>', array('colspan'=>'6', 'style'=>'text-align:right'));
                 echo tagcontent('td', number_decimal($tot_val_serv), array('align'=>'right'));

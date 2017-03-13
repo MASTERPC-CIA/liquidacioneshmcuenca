@@ -63,7 +63,7 @@ class Liquidacion_general extends MX_Controller {
                 if ($id_grupo != -1) {
                     $nombreS = $this->generic_model->get_val_where('hmc_servicio_grupo_bodega', array('dep_gp_id_grupo' => $id_grupo), 'dep_gp_descripcion');
                     $res['ing_facturas'] = $this->get_ing_fact_por_grupo_liq($fecha_desde, $fecha_hasta, $id_grupo, $this->comp_factura);
-                    $res['ing_planillas'] = $this->get_ing_pla_por_grupo($fecha_desde, $fecha_hasta, $id_grupo, $this->comp_egreso_Serv);
+//                    $res['ing_planillas'] = $this->get_ing_pla_por_grupo($fecha_desde, $fecha_hasta, $id_grupo, $this->comp_egreso_Serv);
                     if ($id_grupo == $this->grupo_imagen) {
                         $porcent = get_settings('PORC_MED_RADIOLOGOS');
                     } else {
@@ -87,6 +87,7 @@ class Liquidacion_general extends MX_Controller {
     }
 
     public function get_honor_medicos() {
+        
         $id_grupo = $this->input->post('depart_id');
         $fecha_desde = $this->input->post('f_desde');
         $fecha_hasta = $this->input->post('f_hasta');
@@ -105,7 +106,7 @@ class Liquidacion_general extends MX_Controller {
 
                     $res['nombreS'] = $this->generic_model->get_val_where('hmc_servicio_grupo_bodega', array('dep_gp_id_grupo' => $id_grupo), 'dep_gp_descripcion');
                     $res['clientes_fact'] = $this->get_clientes_estudio_serv_fact_liqui($fecha_desde, $fecha_hasta, $id_grupo, $tipo_cliente);
-                    $res['clientes_plan'] = $this->get_clientes_estudio_serv_pla($fecha_desde, $fecha_hasta, $id_grupo, $tipo_cliente);
+//                    $res['clientes_plan'] = $this->get_clientes_estudio_serv_pla($fecha_desde, $fecha_hasta, $id_grupo, $tipo_cliente);
                     $this->load->view('liq_general_views/result_honor_medicos', $res);
                 } else {
                     echo info_msg('Debe seleccionar un servicio.', '18px');
@@ -132,7 +133,7 @@ class Liquidacion_general extends MX_Controller {
     }
 
     public function get_clientes_estudio_serv_pla($fecha_desde, $fecha_hasta, $id_grupo, $tipo_cliente) {
-        $fields = 'pl.pla_fecha_creacion, concat(bc.nombres, bc.apellidos) nombres, bst.tipo, bct.abreviatura, p.nombreUnico, pld.pdet_total';
+        $fields = 'pl.pla_fecha_creacion, concat_ws("",bc.nombres," " ,bc.apellidos) nombres, bst.tipo, bct.abreviatura, p.nombreUnico, pld.pdet_total';
 
         $where_data['pl.pla_fecha_creacion >= '] = $fecha_desde;
         $where_data['pl.pla_fecha_creacion <= '] = $fecha_hasta;
@@ -301,7 +302,7 @@ class Liquidacion_general extends MX_Controller {
     public function get_egresos($fecha_desde, $fecha_hasta, $id_grupo) {
 
         $tot_fact = $this->get_clientes_estudio_serv_fact($fecha_desde, $fecha_hasta, $id_grupo);
-        $tot_plan = $this->get_clientes_estudio_serv_pla_tot($fecha_desde, $fecha_hasta, $id_grupo);
+//        $tot_plan = $this->get_clientes_estudio_serv_pla_tot($fecha_desde, $fecha_hasta, $id_grupo);
 
 //        $tot_fact = 0;
 //        $tot_plan = 0;
@@ -315,8 +316,10 @@ class Liquidacion_general extends MX_Controller {
 //                $tot_plan += $value->pdet_total;
 //            }
 //        }
-        $total_egresos = $tot_fact + $tot_plan;
-        return $total_egresos;
+//        $total_egresos = $tot_fact + $tot_plan;
+
+//        return $total_egresos;
+        return $tot_fact;
     }
 
     //Funciones utiles para obtener la liquidacion por servicios 
@@ -348,7 +351,7 @@ class Liquidacion_general extends MX_Controller {
         $fields = 'DISTINCT(bst.id) id_serv, bst.tipo tipo_serv';
         $where_data = array('fv.tipo_pago' => '1', 'fv.puntoventaempleado_tiposcomprobante_cod' => $tipo_comp,
             'fv.fechaarchivada >= ' => $fecha_desde, 'fv.fechaarchivada <= ' => $fecha_hasta, 'fv.estado' => 2,
-            'p.productogrupo_codigo' => $id_grupo, 'fv.servicio_hmc <= ' => 1, 'bc.clientetipo_idclientetipo' => 14,
+            'p.productogrupo_codigo' => $id_grupo, 'fv.servicio_hmc <= ' => 1, /*'bc.clientetipo_idclientetipo' => 14,*/
         );
         $join_cluase = array(
             '0' => array('table' => 'bill_sttiposervicio bst', 'condition' => 'bst.id=fv.servicio_hmc'),
@@ -365,7 +368,7 @@ class Liquidacion_general extends MX_Controller {
         $fields = 'DISTINCT(bct.idclientetipo) id_cliente_tipo, bct.tipo tipo_cliente';
         $where_data = array('fv.tipo_pago' => '1', 'fv.puntoventaempleado_tiposcomprobante_cod' => $tipo_comp,
             'fv.fechaarchivada >= ' => $fecha_desde, 'fv.fechaarchivada <= ' => $fecha_hasta, 'fv.estado' => 2,
-            'p.productogrupo_codigo' => $id_grupo, 'fv.servicio_hmc' => $id_servicio, 'bc.clientetipo_idclientetipo' => 14
+            'p.productogrupo_codigo' => $id_grupo, 'fv.servicio_hmc' => $id_servicio,/* 'bc.clientetipo_idclientetipo' => 14*/
         );
         $join_cluase = array(
             '0' => array('table' => 'billing_cliente bc', 'condition' => 'bc.PersonaComercio_cedulaRuc=fv.cliente_cedulaRuc'),
@@ -394,7 +397,7 @@ class Liquidacion_general extends MX_Controller {
     }
 
     public function get_clientes_estudio_serv_fact_liqui($fecha_desde, $fecha_hasta, $id_grupo, $tipo_cliente) {
-        $fields = 'fv.fechaarchivada, concat(bc.nombres, bc.apellidos) nombres, bst.tipo, bct.abreviatura, p.nombreUnico, fvd.itemxcantidadprecioiva valor';
+        $fields = 'fv.fechaarchivada, concat_ws("",bc.nombres," ",bc.apellidos) nombres, bst.tipo, bct.abreviatura, p.nombreUnico, fvd.itemxcantidadprecioiva valor';
 
         $where_data['fv.fechaarchivada >= '] = $fecha_desde;
         $where_data['fv.fechaarchivada <= '] = $fecha_hasta;
@@ -402,7 +405,7 @@ class Liquidacion_general extends MX_Controller {
         $where_data['fv.puntoventaempleado_tiposcomprobante_cod'] = '01';
         $where_data['p.productogrupo_codigo'] = $id_grupo;
 
-        //Se modifica para crear filtros de busqueda por tipo de paciente paciente
+        //Se modifica para crear filtros de busqueda por tipo de paciente
 
         if ($tipo_cliente != -1) {
             $where_data['bc.clientetipo_idclientetipo'] = $tipo_cliente;
@@ -415,7 +418,8 @@ class Liquidacion_general extends MX_Controller {
             '3' => array('table' => 'billing_clientetipo bct', 'condition' => 'bct.idclientetipo=bc.clientetipo_idclientetipo'),
             '4' => array('table' => 'bill_sttiposervicio bst', 'condition' => 'bst.id=fv.servicio_hmc'),
         );
-        $productos = $this->generic_model->get_join('billing_facturaventa fv', $where_data, $join_cluase, $fields);
+        $order_by=array('fv.fechaarchivada'=>'asc');
+        $productos = $this->generic_model->get_join('billing_facturaventa fv', $where_data, $join_cluase, $fields, 0, $order_by);
         return $productos;
     }
 

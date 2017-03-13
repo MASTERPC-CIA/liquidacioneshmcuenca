@@ -27,15 +27,15 @@ echo Open('div',array('class'=>'col-md-12','id'=>'consulta','style'=>'font-size:
                 }
                 $tot_ing +=$ing_facturas['tot_val'];
             }
-            if($ing_planillas){
-                foreach ($ing_planillas['list_ingresos'] as $value) {
-                    echo Open('tr');
-                        echo tagcontent('td', $value->descrip_ing);
-                        echo tagcontent('td', number_decimal($value->valor_ing), array('align'=>'right'));
-                    echo Close('tr');
-                }
-                $tot_ing +=$ing_planillas['tot_val'];
-            }
+//            if($ing_planillas){
+//                foreach ($ing_planillas['list_ingresos'] as $value) {
+//                    echo Open('tr');
+//                        echo tagcontent('td', $value->descrip_ing);
+//                        echo tagcontent('td', number_decimal($value->valor_ing), array('align'=>'right'));
+//                    echo Close('tr');
+//                }
+//                $tot_ing +=$ing_planillas['tot_val'];
+//            }
             echo Open('tr');
                 echo tagcontent('th', 'TOTAL DE INGRESOS: ');
                 echo tagcontent('td', number_decimal($tot_ing), array('align'=>'right'));
